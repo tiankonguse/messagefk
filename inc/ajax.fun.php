@@ -1,5 +1,27 @@
 <?php
 
+function get_user_email($userId){
+	
+	$notSetCenter = "暂时没有设置管理员";
+
+	if($userId == 0)return $notSetCenter;
+	
+	$userId = intval($userId);
+	
+	global $conn;
+	
+	
+	$sql = "select * from user where `id` = '$userId'";
+	$result = mysql_query($sql ,$conn);
+	if($result && $row=mysql_fetch_array($result)){
+		return $row['email'];
+	}else{
+		return $notSetCenter;
+	}
+	
+	
+}
+
 function get_manger_block($code){
 	global $conn;
 	$html = "";
@@ -38,25 +60,6 @@ function get_manger_block($code){
 	$html .= "</tbody>";
 	$html .= "</table>";
 	$html .= "<script>var \$depart_id = $code;</script>";
-	$html .= "<script src=\"js/block.js\"></script>";
-	$html .= "
-		<div id=\"addevent\"  class=\"modal hide fade\">
-		  <div class=\"modal-header\" style=\"text-align: center;cursor: move;\">
-		    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>
-		    <h3></h3>
-		  </div>
-		  <div class=\"modal-body\">
-		    <p>
-				<span>子分类名称 : </span>
-				<input id=\"addevent_name\" type=\"text\" placeholder=\"分类名称\"  class=\"longtext\" >
-			</p>
-		  </div>
-		  <div class=\"modal-footer\">
-		    <button class=\"btn\" data-dismiss=\"modal\" aria-hidden=\"true\" >取消</button>
-		    <button class=\"btn btn-primary\" onclick=\"\">确认</button>
-		  </div>
-		</div>	
-	";
 	
 	return output(0, $html);
 }
@@ -65,7 +68,7 @@ function get_manger_block($code){
 function get_manger_depart(){
 	global $conn;
 	$html = "";
-	$html .= "<table class=\"table table-striped table-bordered table-hover table-condensed tablesorter\" style=\"word-break:break-all;\">";
+	$html .= "<table class=\"table table-striped table-bordered table-hover table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
 	$html .= "<tr>";
 	$html .= "<th>已有分类</th>";
@@ -81,6 +84,10 @@ function get_manger_depart(){
 	while($row=mysql_fetch_array($result)) {
 		$id   = $row['id'];
 		$name = $row['name'];
+		$sendTocenter = $row['center'];
+		
+		$userId = intval($sendTocenter);
+		$userEmail = get_user_email($userId);
 		
 		$html .= "
 			<tr data-id='$id' id='depart$id'>
@@ -94,12 +101,12 @@ function get_manger_depart(){
 					</div>
 				</td>
 				<td>
-					<input  type=\"text\"   disabled=\"\">
+					<input  type=\"text\"   disabled=\"\" value=\"$userEmail\">
 				</td>
 				<td>
 					<div class='btn-group'  data-toggle='buttons-radio'>
 						<button class='btn btn-info' onclick=\"click_update_depart_admin($id,'$name')\">修改</button>
-						<button class='btn btn-danger' onclick=\"click_delete_depart_admin($id, '$name')\">删除</button>
+						<button class='btn btn-danger' onclick=\"click_delete_depart_admin($id, '$name','$userEmail')\">删除</button>
 					</div>
 				</td>
 			</tr>";
@@ -110,28 +117,7 @@ function get_manger_depart(){
 	$html .= "</td>";
 	$html .= "</tr>";
 	$html .= "</tbody>";
-	$html .= "</table>";
-	
-	$html .= "<script src=\"js/depart.js\"></script>";
-	
-	$html .= "
-	<div id=\"addevent\"  class=\"modal hide fade\">
-	  <div class=\"modal-header\" style=\"text-align: center;cursor: move;\">
-	    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>
-	    <h3></h3>
-	  </div>
-	  <div class=\"modal-body\">
-	    <p>
-			<span>分类名称 : </span>
-			<input id=\"addevent_name\" type=\"text\" placeholder=\"分类名称\"  class=\"longtext\" >
-		</p>
-	  </div>
-	  <div class=\"modal-footer\">
-	    <button class=\"btn\" data-dismiss=\"modal\" aria-hidden=\"true\" >取消</button>
-	    <button class=\"btn btn-primary\" onclick=\"\">确认</button>
-	  </div>
-	</div>";
-	
+	$html .= "</table>";	
 	return output(0, $html);
 	
 }

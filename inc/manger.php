@@ -12,6 +12,7 @@
 	delete_block  => 8
 	get_depart_block => 9
 	add_question => 10
+	update_depart_admin => 11
 */
 session_start();
 require_once("init.php");
@@ -33,7 +34,7 @@ if((!$conn || !$result) && $ret){
 	$code = $_GET["state"];
 	if($code != 1 && $code != 2){
 		// check whether have permission 
-		if(!isset($_SESSION["lev"]) || $_SESSION["lev"]=="0"){
+		if(!isset($_SESSION["messagefk_lev"]) || $_SESSION["messagefk_lev"]=="0"){
 			$ret = output(9,"请先登录在操作");
 		}
 	}
@@ -54,6 +55,7 @@ if((!$conn || !$result) && $ret){
 			case 8 :echo $json->encode(delete_block());break;
 			case 9 :echo $json->encode(get_depart_block());break;
 			case 10:echo $json->encode(add_question());break;
+			case 11:echo $json->encode(update_depart_admin());break;
 		}
 	}
 }

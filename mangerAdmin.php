@@ -15,7 +15,7 @@ $name = $_GET["name"];
 $state = $_GET["state"];
 
 if(strcmp($name,"") == 0){
-	$name = "nav";
+	$name = "nav_admin";
 	$state = 1;
 }
 
@@ -65,9 +65,8 @@ $type  =  6;
 			</div>
 		</div>
 	</div>
-
+<script src="js/mangerAdmin.js"></script>
 <script>
-
 
 function remove_active(){
 	$(".content .row ul.nav li.active").removeClass("active");
@@ -95,9 +94,38 @@ function getHtml(name,state){
 	}
 }
 $(document).ready(function(){
+	$('#addevent').on('hide', function () {
+		$("#addevent_name").removeAttr("disabled");
+		$("#addevent_div_phone").css("display","none");
+	});
 	$(".nav-top ul li.nav<?php echo $type; ?>").addClass("active");
 	getHtml(<?php echo "\"$name\",$state";?>);
 });
 </script>
+
+<div id="addevent"  class="modal hide fade">
+	<div class="modal-header" style="text-align: center;cursor: move;">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3></h3>
+	</div>
+	<div class="modal-body">
+	    <p>
+			<div id="addevent_div_name" style="display:none;">
+				<span>分类名称: </span>
+				<input id="addevent_name" type="text" placeholder="分类名称"  class="longtext" >
+			</div>
+			
+			<div id="addevent_div_phone" style="display:none;">
+				<span>电话号码: </span>
+				<input id="addevent_phone" type="text" placeholder="电话号码"  class="longtext" >
+			</div>
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true" >取消</button>
+		<button class="btn btn-primary" onclick="">确认</button>
+	</div>
+</div>
+
 <?php include_once('inc/footer.inc.php'); ?>
 <?php include_once('inc/end.php'); ?>

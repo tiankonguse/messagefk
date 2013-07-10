@@ -15,7 +15,7 @@
 		 <li class="nav4"><a href='login.php'><span>我要登陆</span></a></li>
 	<?php } else {?>
 		<li class="nav5"><a href='logout.php'><span>离开一会</span></a></li>
-		<li class="nav6 info"><a href='javascript:void(0);'><span><?php echo "$messagefk_email";?></span></a></li>
+		<li class="nav7 info"><a href='javascript:void(0);'><span><?php echo "$messagefk_email";?></span></a></li>
 	<?php }?>
 	</ul>
 </div>
