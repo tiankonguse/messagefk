@@ -179,7 +179,8 @@ function add_question() {
 		if (!preg_match('/^.+?@.+?\..+?$/', $email)) {
 			return output(4, "邮箱格式不正确");
 		}
-
+		
+		
 		//Prevent sql injection
 		$title = mysql_real_escape_string($title);
 		$depart_id = mysql_real_escape_string($depart_id);
@@ -190,7 +191,17 @@ function add_question() {
 		$email = mysql_real_escape_string($email);
 		$asktime = time();
 		$state = "1";
-
+		
+		$sql = "select * from depart where id = '$depart_id'";
+		$result_depart = mysql_query($sql, $conn);
+		if(!$row = mysql_fetch_array($result_depart)){
+			return output(6, "你提交的问题分类已不存在，请重新选择分类");
+		}
+		
+		if(intval($row['center']) == 0){
+			return output(6, "你提交的问题的分类的管理员不存在，等待添加管理员后再提交");	
+		}
+		
 		//insert pro
 		$userId = getUserId($email);
 		$sql = "INSERT INTO `problem`(`user_id`, `title`, `content`, `phone`, `block_id`, `depart_id`, `state`) VALUES ('$userId', '$title', '$content', '$phone', '$block_id', '$depart_id', '$state')";
@@ -237,7 +248,7 @@ function addProblemTime($proId, $userId, $time, $state) {
 
 function get_depart_block() {
 	global $conn;
-	$sql = "select * from depart";
+	$sql = "select * from depart where center != ''";
 	$result_depart = mysql_query($sql, $conn);
 
 	$ret = array ();

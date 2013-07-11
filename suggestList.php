@@ -11,6 +11,15 @@ if(strcmp($messagefk_lev, "") == 0){
 	header('Location:login.php?messageCode=1');
 }
 
+$name = $_GET["name"];
+$state = $_GET["state"];
+
+if(strcmp($name,"") == 0){
+	$name = "nav_user";
+	$state = 1;
+}
+
+
 $type  =  2;
 ?>
 <div class="wrap container">
@@ -24,108 +33,78 @@ $type  =  2;
 			<div class="span2 bs-docs-sidebar">
 				<ul class="nav nav-list bs-docs-sidenav">
 					<li class="manger_nav1 active">
-						<a href="javascript:void(0);" onclick="getHtml('user_nav',1);">
+						<a href="javascript:void(0);" onclick="getHtml('nav_user',1);">
 							<i class="icon-chevron-right"></i> 全部
 						</a>
 					</li>
 					<li  class="manger_nav2">
-						<a href="javascript:void(0);" onclick="getHtml('user_nav',2);">
+						<a href="javascript:void(0);" onclick="getHtml('nav_user',2);">
 							<i class="icon-chevron-right"></i> 正在审核中
 						</a>
 					</li>
-					<li  class="manger_nav4">
-						<a href="javascript:void(0);" onclick="getHtml('user_nav',3);">
+					<li  class="manger_nav3">
+						<a href="javascript:void(0);" onclick="getHtml('nav_user',3);">
 							<i class="icon-chevron-right"></i> 正在受理中
 						</a>
 					</li>
-					<li  class="manger_nav5">
-						<a href="javascript:void(0);" onclick="getHtml('user_nav',4);">
+					<li  class="manger_nav4">
+						<a href="javascript:void(0);" onclick="getHtml('nav_user',4);">
 							<i class="icon-chevron-right"></i> 正在维修中
 						</a>
 					</li>
-					<li  class="manger_nav6">
-						<a href="javascript:void(0);" onclick="getHtml('user_nav',5);">
+					<li  class="manger_nav5">
+						<a href="javascript:void(0);" onclick="getHtml('nav_user',5);">
 							<i class="icon-chevron-right"></i> 等待评价中
 						</a>
 					</li>
 					<li  class="manger_nav6">
-						<a href="javascript:void(0);" onclick="getHtml('user_nav',6);">
+						<a href="javascript:void(0);" onclick="getHtml('nav_user',6);">
 							<i class="icon-chevron-right"></i> 完成的
 						</a>
 					</li>
-					<li  class="manger_nav3">
-						<a href="javascript:void(0);" onclick="getHtml('user_nav',7);">
+					<li  class="manger_nav7">
+						<a href="javascript:void(0);" onclick="getHtml('nav_user',7);">
 							<i class="icon-chevron-right"></i> 未通过审核
 						</a>
 					</li>
 				</ul>
 			</div>
 			<div class="span7 mini-layout">
-				<table class="table table-striped table-bordered table-condensed tablesorter" style="word-break:break-all;">
-					<thead>
-						 <tr>
-							<th class="header headerSortDown" style="cursor:pointer;">编号</th>
-							<th class="header headerSortDown" style="cursor:pointer;">服务项目</th>
-							<th class="header headerSortDown" style="cursor:pointer;">标题</th>
-							<th class="header headerSortDown" style="cursor:pointer;">申报时间</th>
-							<th class="header headerSortDown" style="cursor:pointer;">受理人</th>
-							<th class="header headerSortDown" style="cursor:pointer;">受理时间</th>
-							<th class="header headerSortDown" style="cursor:pointer;">用时(分)</th>
-							<th class="header headerSortDown" style="cursor:pointer;">状态</th>
-						</tr>
-					</thead>
-					<tbody>
-	<?php 
-		$sql = "SELECT * FROM `problem` WHERE `user_id` = '$messagefk_id' ORDER BY  `id` DESC";
-		$result = mysql_query($sql ,$conn);
-		while($row=mysql_fetch_array($result)) {
-			$pro_id = $row['id'];
-			$pro_title = $row['title'];
-			$depart_id = $row['depart_id'];
-			$depart_name = getDepartName($depart_id);
-			
-			$total_time = $row['total_time'];
-			$state = $row['state'];
-			
-			$asktime = getTime($pro_id,"1");
-			$asktime = date("Y-m-d h:i:s",$asktime);
-			
-			
-			if($state == 1){
-				$state = "等到管理员审核";
-				$admin = "--";
-				$adminTime = "--";
-				$total_time = "--";
-			}else if($state == 2){
-				
-			}else if($state == 3){
-				
-			}
-			
-			$tr  = "";
-			$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
-			$tr .= "<td>$pro_id</td>";
-			$tr .= "<td>$depart_name</td>";
-			$tr .= "<td><a href=''>$pro_title</a></td>";
-			$tr .= "<td>$asktime</td>";
-			$tr .= "<td>$admin</td>";
-			$tr .= "<td>$adminTime</td>";
-			$tr .= "<td>$total_time</td>";
-			$tr .= "<td>$state</td>";
-			$tr .= "</tr>";
-			echo $tr;
-		}
-	?>
-							
-						
-					</tbody>
-				</table>
+
 			</div>
 		</div>
 	</div>
 <script>
+
+
+function remove_active(){
+	$(".content .row ul.nav li.active").removeClass("active");
+}
+
+function ajax_fun(name,state){
+	$.post("inc/ajax.php",{
+		name:name,
+		state:state
+	},function(d){
+		if(d.code==0){
+			$(".span7.mini-layout").html(d.message);
+		}
+	},"json");
+}
+
+function getHtml(name,state){
+	if(name == 'nav_user'){
+		remove_active();
+		$(".manger_admin_nav"+state).addClass("active");
+		ajax_fun(name,state);
+	}
+}
+
+
+
 $(document).ready(function(){
 	$(".nav-top ul li.nav<?php echo $type; ?>").addClass("active");
+	getHtml(<?php echo "\"$name\",$state";?>);
 });
 </script>
 <?php include_once('inc/footer.inc.php'); ?>

@@ -3,7 +3,7 @@ $(function(){
 	//title
 	var title_check = function () {
 		var title = $("#title").val();
-		if (title.length < 5 || title.length > 30) {
+		if (title.length < 1 || title.length > 70) {
 			$('#_txt_title').removeClass("ok");
 			$('#_txt_title').addClass("err");
 			$('#_txt_title').html("<i class='margin-left2'>&nbsp;</i>标题格式不正确(由5-30个字符组成)");

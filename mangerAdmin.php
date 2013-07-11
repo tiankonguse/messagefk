@@ -19,6 +19,7 @@ if(strcmp($name,"") == 0){
 	$state = 1;
 }
 
+
 $type  =  6;
 ?>
 <div class="wrap container">
@@ -94,10 +95,6 @@ function getHtml(name,state){
 	}
 }
 $(document).ready(function(){
-	$('#addevent').on('hide', function () {
-		$("#addevent_name").removeAttr("disabled");
-		$("#addevent_div_phone").css("display","none");
-	});
 	$(".nav-top ul li.nav<?php echo $type; ?>").addClass("active");
 	getHtml(<?php echo "\"$name\",$state";?>);
 });

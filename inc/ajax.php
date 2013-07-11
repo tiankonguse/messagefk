@@ -34,6 +34,11 @@ if((!$conn || !$result) && $ret){
 		}
 	}else if(strcmp($name,"depart") == 0){
 		echo $json->encode(get_manger_block($code));
+	}else if(strcmp($name,"nav_user") == 0){
+		switch($code){
+			case 1 :echo $json->encode(get_user_all_problem());break;
+			case 2 :echo $json->encode(get_user_wait_pass_problem());break;
+		}
 	}
 	
 

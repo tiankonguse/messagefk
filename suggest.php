@@ -66,7 +66,7 @@ $type  =  1;
 					<li>
 						<p>
 		                    	邮&nbsp;&nbsp;箱：
-							<input id="email" name="email" type="text" value="<?php echo "$messagefk_email";?>" <?php if($lev == 1){echo "disabled";}?> >
+							<input id="email" name="email" type="text" value="<?php echo $messagefk_email;?>" disabled >
 							<i class="text-error width1">*</i>
 							<em id="_txt_email">请填写邮箱</em>
 						</p>     
