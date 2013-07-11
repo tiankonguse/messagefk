@@ -35,7 +35,7 @@ $type  =  6;
 					</li>
 					<li  class="manger_admin_nav2">
 						<a href="javascript:void(0);" onclick="getHtml('nav_admin',2);">
-							<i class="icon-chevron-right"></i> 添加管理员
+							<i class="icon-chevron-right"></i> 未审核的问题
 						</a>
 					</li>
 					<li  class="manger_admin_nav3">

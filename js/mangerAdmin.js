@@ -64,7 +64,6 @@
 		return false;
 	}
 	
-	
 	function click_update_depart(id, name){
 	
 		init_addevent({
@@ -151,8 +150,6 @@
 		return false;
 	}
 	
-	
-	
 	function click_update_depart_admin(id, name){
 	
 		init_addevent({
@@ -200,8 +197,7 @@
 		
 		return false;
 	}
-	
-	
+		
 	function click_delete_depart_admin(id, name, userEmail){
 	
 		init_addevent({
@@ -226,17 +222,41 @@
 		return false;
 	}
 	
-	
 	function delete_depart_admin(id){
-	
+		$.post("inc/manger.php?state=12",{
+				id:id
+			},function(d){
+				if(d.code==0){
+					$('#addevent').modal('hide');
+					showMessage(d.message,function(){window.location = "mangerAdmin.php?name=nav_admin&state=1";},4000);
+				}else{
+					showMessage(d.message);
+				}
+			},"json");
+		
+		return false;
 	}
 	
-	
 	function click_add_block(){
-		$("#addevent_name").removeAttr("disabled");
-		$("#addevent_name").val("");
-		$("#addevent .modal-header h3").html("添加子分类");
-		$("#addevent .modal-footer button.btn-primary").attr("onclick","add_block();");
+	
+		init_addevent({
+			title:"添加子分类",
+			body:[{
+					display:"block",
+					name:"子分类名称 : ",
+					val:"",
+					disabled:false,
+					placeholder:"子分类名称"
+				},{
+					display:"none",
+					name:"",
+					val:"",
+					disabled:false,
+					placeholder:""
+				}],
+			footer:"add_block();"
+		});
+
 		$('#addevent').modal();
 		return false;
 	}
@@ -252,7 +272,7 @@
 			},function(d){
 				if(d.code==0){
 					$('#addevent').modal('hide');
-					showMessage(d.message,function(){window.location = "manger.php?name=depart&state="+$depart_id;},4000);
+					showMessage(d.message,function(){window.location = "mangerAdmin.php?name=depart&state="+$depart_id;},4000);
 				}else{
 					showMessage(d.message);
 				}
@@ -263,10 +283,26 @@
 	}
 	
 	function click_update_block(id, name){
-		$("#addevent_name").removeAttr("disabled");
-		$("#addevent_name").val("");
-		$("#addevent .modal-header h3").html("修改子分类名称[" + name + "]为:");
-		$("#addevent .modal-footer button.btn-primary").attr("onclick","update_block(" + id + ");");
+	
+	
+		init_addevent({
+			title:"修改子分类名称[" + name + "]为:",
+			body:[{
+					display:"block",
+					name:"子分类名称 : ",
+					val:"",
+					disabled:false,
+					placeholder:"子分类名称"
+				},{
+					display:"none",
+					name:"",
+					val:"",
+					disabled:false,
+					placeholder:""
+				}],
+			footer:"update_block(" + id + ");"
+		});
+	
 		$('#addevent').modal();
 		return false;
 	}
@@ -283,7 +319,7 @@
 			},function(d){
 				if(d.code==0){
 					$('#addevent').modal('hide');
-					showMessage(d.message,function(){window.location = "manger.php?name=depart&state="+$depart_id;},4000);
+					showMessage(d.message,function(){window.location = "mangerAdmin.php?name=depart&state="+$depart_id;},4000);
 				}else{
 					showMessage(d.message);
 				}
@@ -294,22 +330,36 @@
 	}
 	
 	function click_delete_block(id, name){
-		$("#addevent_name").attr("disabled","");
-		$("#addevent_name").val("");
-		$("#addevent .modal-header h3").html("删除下面的子分类吗？");
-		$("#addevent_name").val(name);
-		$("#addevent .modal-footer button.btn-primary").attr("onclick","delete_block(" + id + ");");
+	
+		init_addevent({
+			title:"删除下面的子分类吗？",
+			body:[{
+					display:"block",
+					name:"子分类名称 : ",
+					val:name,
+					disabled:true,
+					placeholder:"子分类名称"
+				},{
+					display:"none",
+					name:"",
+					val:"",
+					disabled:false,
+					placeholder:""
+				}],
+			footer:"delete_block(" + id + ");"
+		});
+
 		$('#addevent').modal();
 		return false;
 	}
 	
 	function delete_block($id){
-		$.post("inc/manger.function.php?state=1",{
+		$.post("inc/manger.php?state=8",{
 				id:$id
 			},function(d){
 				if(d.code==0){
 					$('#addevent').modal('hide');
-					showMessage(d.message,function(){window.location = "manger.php?name=depart&state="+$depart_id;},4000);
+					showMessage(d.message,function(){window.location = "mangerAdmin.php?name=depart&state="+$depart_id;},4000);
 				}else{
 					showMessage(d.message);
 				}

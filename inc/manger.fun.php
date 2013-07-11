@@ -4,7 +4,6 @@ function isEmail($email){
 	return preg_match('/^.+?@.+?\..+?$/', $email);
 }
 
-
 function isPhone($phone){
 	return preg_match('/^[0-9]{11,11}$/', $phone);
 }
@@ -15,7 +14,6 @@ function addUser($email, $lev) {
 	$sql = "insert into `user` (`email`,`lev`) values('$email', '$lev')";
 	return mysql_query($sql, $conn);
 }
-
 
 //$email is security and correct.
 function getUserId($email) {
@@ -37,6 +35,55 @@ function setUserLev($userId, $lev, $phone) {
 	global $conn;
 	$sql = "UPDATE `user` SET `lev` = '$lev' ,`phone` = '$phone' WHERE `id`= $userId";
 	return mysql_query($sql, $conn);
+}
+
+function delete_depart_admin(){
+	global $conn;
+	//检查变量是否存在
+	if (isset ($_POST['id'])) {
+		//获得变量的数据
+		$id = $_POST['id'];
+
+		//检查表单数据是否合法
+		if (strcmp($id, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
+
+		//防止sql注入
+		$id = mysql_real_escape_string($id);
+		
+		$sql = "select * from `depart` where `id` = '$id'";
+		$result = mysql_query($sql, $conn);
+		if(!$row = mysql_fetch_array($result)){
+			return output(6, "这个分类不存在，可能已被管理员删除！");
+		}
+		$userId = $row["center"];
+		
+		$sql = "select count(*) num from `depart` where `center` = '$userId'";;
+		$result = mysql_query($sql, $conn);
+		$row = mysql_fetch_array($result);
+		$num = $row["num"];
+
+		if($num == 0){
+			return output(6, "这个用户可能不是管理员。");
+		}
+		
+		if($num == 1){
+			if(!mysql_query("UPDATE `user` SET `lev` = '1'  WHERE `id`= $userId", $conn)){
+				return output(6, "删除管理员时出错");
+			}
+		}
+		
+		if(mysql_query("UPDATE `depart` SET `center` = NULL WHERE `id`= $id", $conn)){
+			return output(0, "删除管理员成功");
+		}else{
+			return output(6, "删除管理员时出错");
+		}
+		
+		
+	}
+	
+	
 }
 
 function update_depart_admin() {
@@ -96,8 +143,6 @@ function update_depart_admin() {
 	}
 
 }
-
-
 
 function add_question() {
 	global $conn;
@@ -189,10 +234,6 @@ function addProblemTime($proId, $userId, $time, $state) {
 	$sql = "INSERT INTO `problem_time`(`pro_id`, `user_id`, `time`, `state`) VALUES ('$proId', '$userId', '$time', '$state')";
 	mysql_query($sql, $conn);
 }
-
-
-
-
 
 function get_depart_block() {
 	global $conn;

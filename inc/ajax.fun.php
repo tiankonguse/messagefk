@@ -1,5 +1,21 @@
 <?php
 
+function getDepartName($depart_id){
+	global $conn;
+	$sql = "select * from `depart` where `id` = '$depart_id'";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	return $row['name'];
+}
+
+function getTime($pro_id, $state){
+	global $conn;
+	$sql = "select * from `problem_time` where `pro_id` = '$pro_id' and `state` = '$state'";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	return $row['time'];
+}
+
 function get_user_email($userId){
 	
 	$notSetCenter = "暂时没有设置管理员";
@@ -9,7 +25,6 @@ function get_user_email($userId){
 	$userId = intval($userId);
 	
 	global $conn;
-	
 	
 	$sql = "select * from user where `id` = '$userId'";
 	$result = mysql_query($sql ,$conn);
@@ -22,8 +37,18 @@ function get_user_email($userId){
 	
 }
 
+function checkIfIs($lev){
+	$messagefk_lev   = $_SESSION['messagefk_lev'];
+	return strcmp($lev,$messagefk_lev);
+}
+
 function get_manger_block($code){
 	global $conn;
+	
+	if(checkIfIs(3) != 0){
+		return output(0, "你的权限不足");
+	}
+	
 	$html = "";
 	
 	$html .= "<table class=\"table table-striped table-bordered table-hover table-condensed tablesorter\" style=\"word-break:break-all;\">";
@@ -64,9 +89,15 @@ function get_manger_block($code){
 	return output(0, $html);
 }
 
-
 function get_manger_depart(){
+
 	global $conn;
+	
+	if(checkIfIs(3) != 0){
+		return output(0, "你的权限不足");
+	}
+	
+	
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-hover table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
@@ -121,3 +152,170 @@ function get_manger_depart(){
 	return output(0, $html);
 	
 }
+
+function get_not_accept_problem(){
+	global $conn;
+	
+	if(checkIfIs(3) != 0){
+		return output(0, "你的权限不足");
+	}
+	
+	$html = "";
+	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
+	$html .= "<thead>";
+	$html .= "<tr>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">编号</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">服务项目</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">标题</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">申报时间</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">状态</th>";
+	$html .= "</tr>";
+	$html .= "</thead>";
+	$html .= "<tbody>";
+	
+	$sql = "SELECT * FROM `problem` WHERE `state` = '1' ORDER BY  `id` DESC";
+	$result = mysql_query($sql ,$conn);
+	while($row=mysql_fetch_array($result)) {
+		$pro_id = $row['id'];
+		$pro_title = $row['title'];
+		$depart_id = $row['depart_id'];
+		$depart_name = getDepartName($depart_id);
+		
+		$asktime = getTime($pro_id,"1");
+		$asktime = date("Y-m-d h:i:s",$asktime);
+		
+		$tr  = "";
+		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
+		$tr .= "<td>$pro_id</td>";
+		$tr .= "<td>$depart_name</td>";
+		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td>$asktime</td>";
+		$tr .= "<td>等到管理员审核</td>";
+		$tr .= "</tr>";	
+		$html .= $tr;
+	}
+	
+	$html .= "</tbody>";
+	$html .= "</table>";
+	
+	return output(0, $html);
+}
+
+function get_not_fixxing_problem(){
+	global $conn;
+	
+	if(checkIfIs(3) != 0){
+		return output(0, "你的权限不足");
+	}
+
+	$html = "";
+	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
+	$html .= "<thead>";
+	$html .= "<tr>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">编号</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">服务项目</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">标题</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">申报时间</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">审核时间</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">状态</th>";
+	$html .= "</tr>";
+	$html .= "</thead>";
+	$html .= "<tbody>";
+	
+
+	$sql = "SELECT * FROM `problem` WHERE `state` = '2' ORDER BY  `id` DESC";
+	$result = mysql_query($sql ,$conn);
+	while($row=mysql_fetch_array($result)) {
+		$pro_id = $row['id'];
+		$pro_title = $row['title'];
+		$depart_id = $row['depart_id'];
+		$depart_name = getDepartName($depart_id);
+		
+		$asktime = getTime($pro_id,"1");
+		$asktime = date("Y-m-d h:i:s",$asktime);
+		
+		$sql = "SELECT * FROM `problem_time` WHERE `pro_id` = '$pro_id' and `state` = '2'";
+		$result_problem_time = mysql_query($sql ,$conn);
+		$row_problem_time = mysql_fetch_array($result_problem_time);
+		$acceptTime = $row_problem_time["time"];
+		$acceptTime = date("Y-m-d h:i:s",$acceptTime);
+		
+		$tr  = "";
+		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
+		$tr .= "<td>$pro_id</td>";
+		$tr .= "<td>$depart_name</td>";
+		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td>$asktime</td>";
+		$tr .= "<td>$acceptTime</td>";
+		$tr .= "<td>未受理的问题</td>";
+		$tr .= "</tr>";	
+		$html .= $tr;
+	}
+	
+	$html .= "</tbody>";
+	$html .= "</table>";
+	
+	return output(0, $html);
+}
+
+
+function get_now_fixxing_problem(){
+	global $conn;
+	
+	if(checkIfIs(3) != 0){
+		return output(0, "你的权限不足");
+	}
+
+	$html = "";
+	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
+	$html .= "<thead>";
+	$html .= "<tr>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">编号</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">服务项目</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">标题</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">申报时间</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">受理时间</th>";
+	$html .= "<th class=\"header headerSortDown\" style=\"cursor:pointer;\">状态</th>";
+	$html .= "</tr>";
+	$html .= "</thead>";
+	$html .= "<tbody>";
+	
+
+	$sql = "SELECT * FROM `problem` WHERE `state` = '3' ORDER BY  `id` DESC";
+	$result = mysql_query($sql ,$conn);
+	while($row=mysql_fetch_array($result)) {
+		$pro_id = $row['id'];
+		$pro_title = $row['title'];
+		$depart_id = $row['depart_id'];
+		$depart_name = getDepartName($depart_id);
+		
+		$asktime = getTime($pro_id,"1");
+		$asktime = date("Y-m-d h:i:s",$asktime);
+		
+		$sql = "SELECT * FROM `problem_time` WHERE `pro_id` = '$pro_id' and `state` = '3'";
+		$result_problem_time = mysql_query($sql ,$conn);
+		$row_problem_time = mysql_fetch_array($result_problem_time);
+		$acceptTime = $row_problem_time["time"];
+		$acceptTime = date("Y-m-d h:i:s",$acceptTime);
+		
+		$tr  = "";
+		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
+		$tr .= "<td>$pro_id</td>";
+		$tr .= "<td>$depart_name</td>";
+		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td>$asktime</td>";
+		$tr .= "<td>$acceptTime</td>";
+		$tr .= "<td>正在维修中</td>";
+		$tr .= "</tr>";	
+		$html .= $tr;
+	}
+	
+	$html .= "</tbody>";
+	$html .= "</table>";
+	
+	return output(0, $html);
+}
+
+
+
+

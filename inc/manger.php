@@ -13,6 +13,7 @@
 	get_depart_block => 9
 	add_question => 10
 	update_depart_admin => 11
+	delete_depart_admin => 12
 */
 session_start();
 require_once("init.php");
@@ -56,6 +57,7 @@ if((!$conn || !$result) && $ret){
 			case 9 :echo $json->encode(get_depart_block());break;
 			case 10:echo $json->encode(add_question());break;
 			case 11:echo $json->encode(update_depart_admin());break;
+			case 12:echo $json->encode(delete_depart_admin());break;
 		}
 	}
 }
