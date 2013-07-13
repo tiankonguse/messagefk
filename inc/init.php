@@ -4,10 +4,8 @@ ini_set('date.timezone','Asia/Shanghai');
 date_default_timezone_set('Asia/Shanghai');
 
 define('DB_HOST','127.0.0.1');
-define('DB_NAME','messagefk');
-// define('DB_NAME','tiankong_mfk');
-define('DB_USER','messagefk');
-// define('DB_USER','tiankong_mfk');
+define('DB_NAME','tiankong_mfk');
+define('DB_USER','tiankong_mfk');
 define('DB_PASS','messagefk');
 define('SALT','messagefk');
 

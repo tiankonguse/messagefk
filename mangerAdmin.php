@@ -20,6 +20,8 @@ if(strcmp($name,"") == 0){
 }
 
 
+
+
 $type  =  6;
 ?>
 <div class="wrap container">
@@ -36,27 +38,27 @@ $type  =  6;
 					</li>
 					<li  class="manger_admin_nav2">
 						<a href="javascript:void(0);" onclick="getHtml('nav_admin',2);">
-							<i class="icon-chevron-right"></i> 未审核的问题
+							<i class="icon-chevron-right"></i> 等待审核的问题
 						</a>
 					</li>
 					<li  class="manger_admin_nav3">
 						<a href="javascript:void(0);" onclick="getHtml('nav_admin',3);">
-							<i class="icon-chevron-right"></i> 未受理的问题
+							<i class="icon-chevron-right"></i> 等待受理的问题
 						</a>
 					</li>
 					<li  class="manger_admin_nav4">
 						<a href="javascript:void(0);" onclick="getHtml('nav_admin',4);">
-							<i class="icon-chevron-right"></i> 正在维修中的问题
+							<i class="icon-chevron-right"></i> 正在维修的问题
 						</a>
 					</li>
 					<li  class="manger_admin_nav5">
 						<a href="javascript:void(0);" onclick="getHtml('nav_admin',5);">
-							<i class="icon-chevron-right"></i> 未评价的问题
+							<i class="icon-chevron-right"></i> 等待评价的问题
 						</a>
 					</li>
 					<li  class="manger_admin_nav6">
 						<a href="javascript:void(0);" onclick="getHtml('nav_admin',6);">
-							<i class="icon-chevron-right"></i> 已评价的问题
+							<i class="icon-chevron-right"></i> 已完成的问题
 						</a>
 					</li>
 				</ul>

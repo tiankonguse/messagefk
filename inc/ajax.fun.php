@@ -17,15 +17,15 @@ function getTime($pro_id, $state){
 }
 
 function get_user_email($userId){
-	
+
 	$notSetCenter = "暂时没有设置管理员";
 
 	if($userId == 0)return $notSetCenter;
-	
+
 	$userId = intval($userId);
-	
+
 	global $conn;
-	
+
 	$sql = "select * from user where `id` = '$userId'";
 	$result = mysql_query($sql ,$conn);
 	if($result && $row=mysql_fetch_array($result)){
@@ -33,8 +33,8 @@ function get_user_email($userId){
 	}else{
 		return $notSetCenter;
 	}
-	
-	
+
+
 }
 
 function checkIfIs($lev){
@@ -44,13 +44,13 @@ function checkIfIs($lev){
 
 function get_manger_block($code){
 	global $conn;
-	
+
 	if(checkIfIs(3) != 0){
 		return output(0, "你的权限不足");
 	}
-	
+
 	$html = "";
-	
+
 	$html .= "<table class=\"table table-striped table-bordered table-hover table-condensed tablesorter\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
 	$html .= "<tr>";
@@ -59,7 +59,7 @@ function get_manger_block($code){
 	$html .= "</tr>";
 	$html .= "</thead>";
 	$html .= "<tbody>";
-	
+
 	$sql = "SELECT * FROM `block` WHERE id in (SELECT `block_id` FROM `map_block_depart` WHERE depart_id = '$code')";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
@@ -85,19 +85,19 @@ function get_manger_block($code){
 	$html .= "</tbody>";
 	$html .= "</table>";
 	$html .= "<script>var \$depart_id = $code;</script>";
-	
+
 	return output(0, $html);
 }
 
 function get_manger_depart(){
 
 	global $conn;
-	
+
 	if(checkIfIs(3) != 0){
 		return output(0, "你的权限不足");
 	}
-	
-	
+
+
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-hover table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
@@ -116,10 +116,10 @@ function get_manger_depart(){
 		$id   = $row['id'];
 		$name = $row['name'];
 		$sendTocenter = $row['center'];
-		
+
 		$userId = intval($sendTocenter);
 		$userEmail = get_user_email($userId);
-		
+
 		$html .= "
 			<tr data-id='$id' id='depart$id'>
 				<td>
@@ -148,18 +148,18 @@ function get_manger_depart(){
 	$html .= "</td>";
 	$html .= "</tr>";
 	$html .= "</tbody>";
-	$html .= "</table>";	
+	$html .= "</table>";
 	return output(0, $html);
-	
+
 }
 
-function get_not_accept_problem(){
+function get_admin_wait_check_problem(){
 	global $conn;
-	
+
 	if(checkIfIs(3) != 0){
 		return output(0, "你的权限不足");
 	}
-	
+
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
@@ -172,7 +172,7 @@ function get_not_accept_problem(){
 	$html .= "</tr>";
 	$html .= "</thead>";
 	$html .= "<tbody>";
-	
+
 	$sql = "SELECT * FROM `problem` WHERE `state` = '1' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
@@ -180,30 +180,30 @@ function get_not_accept_problem(){
 		$pro_title = $row['title'];
 		$depart_id = $row['depart_id'];
 		$depart_name = getDepartName($depart_id);
-		
+
 		$asktime = getTime($pro_id,"1");
 		$asktime = date("Y-m-d h:i:s",$asktime);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
 		$tr .= "<td>$depart_name</td>";
-		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td><a href='problem.php?id=$pro_id'>$pro_title</a></td>";
 		$tr .= "<td>$asktime</td>";
 		$tr .= "<td>等到管理员审核</td>";
-		$tr .= "</tr>";	
+		$tr .= "</tr>";
 		$html .= $tr;
 	}
-	
+
 	$html .= "</tbody>";
 	$html .= "</table>";
-	
+
 	return output(0, $html);
 }
 
-function get_not_fixxing_problem(){
+function get_admin_wait_accept_problem(){
 	global $conn;
-	
+
 	if(checkIfIs(3) != 0){
 		return output(0, "你的权限不足");
 	}
@@ -221,7 +221,7 @@ function get_not_fixxing_problem(){
 	$html .= "</tr>";
 	$html .= "</thead>";
 	$html .= "<tbody>";
-	
+
 
 	$sql = "SELECT * FROM `problem` WHERE `state` = '2' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
@@ -230,38 +230,38 @@ function get_not_fixxing_problem(){
 		$pro_title = $row['title'];
 		$depart_id = $row['depart_id'];
 		$depart_name = getDepartName($depart_id);
-		
+
 		$asktime = getTime($pro_id,"1");
 		$asktime = date("Y-m-d h:i:s",$asktime);
-		
+
 		$sql = "SELECT * FROM `problem_time` WHERE `pro_id` = '$pro_id' and `state` = '2'";
 		$result_problem_time = mysql_query($sql ,$conn);
 		$row_problem_time = mysql_fetch_array($result_problem_time);
 		$acceptTime = $row_problem_time["time"];
 		$acceptTime = date("Y-m-d h:i:s",$acceptTime);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
 		$tr .= "<td>$depart_name</td>";
-		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td><a href='problem.php?id=$pro_id'>$pro_title</a></td>";
 		$tr .= "<td>$asktime</td>";
 		$tr .= "<td>$acceptTime</td>";
 		$tr .= "<td>未受理的问题</td>";
-		$tr .= "</tr>";	
+		$tr .= "</tr>";
 		$html .= $tr;
 	}
-	
+
 	$html .= "</tbody>";
 	$html .= "</table>";
-	
+
 	return output(0, $html);
 }
 
 
-function get_now_fixxing_problem(){
+function get_admin_now_fixxing_problem(){
 	global $conn;
-	
+
 	if(checkIfIs(3) != 0){
 		return output(0, "你的权限不足");
 	}
@@ -279,7 +279,7 @@ function get_now_fixxing_problem(){
 	$html .= "</tr>";
 	$html .= "</thead>";
 	$html .= "<tbody>";
-	
+
 
 	$sql = "SELECT * FROM `problem` WHERE `state` = '3' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
@@ -288,31 +288,31 @@ function get_now_fixxing_problem(){
 		$pro_title = $row['title'];
 		$depart_id = $row['depart_id'];
 		$depart_name = getDepartName($depart_id);
-		
+
 		$asktime = getTime($pro_id,"1");
 		$asktime = date("Y-m-d h:i:s",$asktime);
-		
+
 		$sql = "SELECT * FROM `problem_time` WHERE `pro_id` = '$pro_id' and `state` = '3'";
 		$result_problem_time = mysql_query($sql ,$conn);
 		$row_problem_time = mysql_fetch_array($result_problem_time);
 		$acceptTime = $row_problem_time["time"];
 		$acceptTime = date("Y-m-d h:i:s",$acceptTime);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
 		$tr .= "<td>$depart_name</td>";
-		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td><a href='problem.php?id=$pro_id'>$pro_title</a></td>";
 		$tr .= "<td>$asktime</td>";
 		$tr .= "<td>$acceptTime</td>";
 		$tr .= "<td>正在维修中</td>";
-		$tr .= "</tr>";	
+		$tr .= "</tr>";
 		$html .= $tr;
 	}
-	
+
 	$html .= "</tbody>";
 	$html .= "</table>";
-	
+
 	return output(0, $html);
 }
 
@@ -322,7 +322,7 @@ function get_user_all_problem(){
 	if(checkIfIs(0) == 0){
 		return output(0, "请先登录再操作");
 	}
-	
+
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
@@ -338,7 +338,7 @@ function get_user_all_problem(){
 	$html .= "</tr>";
 	$html .= "</thead>";
 	$html .= "<tbody>";
-	
+
 	$userId    = intval($_SESSION['messagefk_id']);
 	$sql = "SELECT * FROM `problem` WHERE `user_id` = '$userId' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
@@ -348,16 +348,16 @@ function get_user_all_problem(){
 		$depart_id = $row['depart_id'];
 		$depart_name = getDepartName($depart_id);
 		$state = $row['state'];
-		
+
 		$askTime = getTime($pro_id,"1");
 		$askTime = date("Y-m-d h:i:s",$askTime);
-		
+
 		$stateHtml = "等待管理员审核";
-		
+
 		$passTime = "--:--:--";;
 		$acceptTime = "--:--:--";
 		$finishTime = "--:--:--";
-		
+
 		if($state == 6){
 			$stateHtml = "审核未通过";
 		}else{
@@ -366,43 +366,43 @@ function get_user_all_problem(){
 				$passTime = date("Y-m-d h:i:s",$passTime);
 				$stateHtml = "等待管理员受理";
 			}
-			
-			
+				
+				
 			if($state >= 3){
 				$acceptTime = getTime($pro_id,"3");
 				$acceptTime = date("Y-m-d h:i:s",$acceptTime);
 				$stateHtml = "正在维修中";
 			}
 
-			
+				
 			if($state >= 4){
 				$finishTime = getTime($pro_id,"4");
 				$finishTime = date("Y-m-d h:i:s",$finishTime);
 				$stateHtml = "等待评价";
 			}
-			
+				
 			if($state >= 5){
 				$stateHtml = "已完成的问题";
 			}
 		}
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
 		$tr .= "<td>$depart_name</td>";
-		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td><a href='problem.php?id=$pro_id'>$pro_title</a></td>";
 		$tr .= "<td>$askTime</td>";
 		$tr .= "<td>$passTime</td>";
 		$tr .= "<td>$acceptTime</td>";
 		$tr .= "<td>$finishTime</td>";
 		$tr .= "<td>$stateHtml</td>";
-		$tr .= "</tr>";	
+		$tr .= "</tr>";
 		$html .= $tr;
 	}
-	
+
 	$html .= "</tbody>";
 	$html .= "</table>";
-	
+
 	return output(0, $html);
 }
 
@@ -413,7 +413,7 @@ function get_user_wait_pass_problem(){
 	if(checkIfIs(0) == 0){
 		return output(0, "请先登录再操作");
 	}
-	
+
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
@@ -429,7 +429,7 @@ function get_user_wait_pass_problem(){
 	$html .= "</tr>";
 	$html .= "</thead>";
 	$html .= "<tbody>";
-	
+
 	$userId    = intval($_SESSION['messagefk_id']);
 	$sql = "SELECT * FROM `problem` WHERE `user_id` = '$userId' and `state` = '1' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
@@ -439,16 +439,16 @@ function get_user_wait_pass_problem(){
 		$depart_id = $row['depart_id'];
 		$depart_name = getDepartName($depart_id);
 		$state = $row['state'];
-		
+
 		$askTime = getTime($pro_id,"1");
 		$askTime = date("Y-m-d h:i:s",$askTime);
-		
+
 		$stateHtml = "等待管理员审核";
-		
+
 		$passTime = "--:--:--";;
 		$acceptTime = "--:--:--";
 		$finishTime = "--:--:--";
-		
+
 		if($state == 6){
 			$stateHtml = "审核未通过";
 		}else{
@@ -457,43 +457,43 @@ function get_user_wait_pass_problem(){
 				$passTime = date("Y-m-d h:i:s",$passTime);
 				$stateHtml = "等待管理员受理";
 			}
-			
-			
+				
+				
 			if($state >= 3){
 				$acceptTime = getTime($pro_id,"3");
 				$acceptTime = date("Y-m-d h:i:s",$acceptTime);
 				$stateHtml = "正在维修中";
 			}
 
-			
+				
 			if($state >= 4){
 				$finishTime = getTime($pro_id,"4");
 				$finishTime = date("Y-m-d h:i:s",$finishTime);
 				$stateHtml = "等待评价";
 			}
-			
+				
 			if($state >= 5){
 				$stateHtml = "已完成的问题";
 			}
 		}
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
 		$tr .= "<td>$depart_name</td>";
-		$tr .= "<td><a href=''>$pro_title</a></td>";
+		$tr .= "<td><a href='problem.php?id=$pro_id'>$pro_title</a></td>";
 		$tr .= "<td>$askTime</td>";
 		$tr .= "<td>$passTime</td>";
 		$tr .= "<td>$acceptTime</td>";
 		$tr .= "<td>$finishTime</td>";
 		$tr .= "<td>$stateHtml</td>";
-		$tr .= "</tr>";	
+		$tr .= "</tr>";
 		$html .= $tr;
 	}
-	
+
 	$html .= "</tbody>";
 	$html .= "</table>";
-	
+
 	return output(0, $html);
 }
 

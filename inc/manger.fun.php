@@ -542,7 +542,7 @@ function register() {
 		}
 
 		//实现本函数功能
-		$sql = "insert into `user` (`email`,`lev`) values('$email','0')";
+		$sql = "insert into `user` (`email`,`lev`) values('$email','1')";
 		$result = @ mysql_query($sql, $conn);
 		if ($result) {
 			$_SESSION['email'] = $email;
