@@ -68,8 +68,17 @@ $type  =  0;
 function remove_active(){
 	$(".content .row ul.nav li.active").removeClass("active");
 }
+function setUrl(name,state){
+	var _state = {title:'',url:window.location.href.split("?")[0]};
+
+    history.pushState(_state,'','?name='+name+'&state='+state);	
+}
+
 
 function ajax_fun(name,state){
+
+	setUrl(name,state);
+	
 	$.post("inc/ajax.php",{
 		name:name,
 		state:state

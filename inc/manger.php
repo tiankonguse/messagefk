@@ -50,16 +50,16 @@ if((!$conn || !$result) && $ret){
 		switch($code){
 			case 1 :echo $json->encode(register());break;
 			case 2 :echo $json->encode(login());break;
-			case 3 :echo $json->encode(add_depart());break;
-			case 4 :echo $json->encode(update_depart());break;
-			case 5 :echo $json->encode(delete_depart());break;
-			case 6 :echo $json->encode(add_block());break;
-			case 7 :echo $json->encode(update_block());break;
-			case 8 :echo $json->encode(delete_block());break;
-			case 9 :echo $json->encode(get_depart_block());break;
-			case 10:echo $json->encode(add_question());break;
-			case 11:echo $json->encode(update_depart_admin());break;
-			case 12:echo $json->encode(delete_depart_admin());break;
+			case 3 :echo $json->encode(addDepart());break;
+			case 4 :echo $json->encode(updateDepart());break;
+			case 5 :echo $json->encode(deleteDepart());break;
+			case 6 :echo $json->encode(addBlock());break;
+			case 7 :echo $json->encode(updateBlock());break;
+			case 8 :echo $json->encode(deleteBlock());break;
+			case 9 :echo $json->encode(getDepartBlock());break;
+			case 10:echo $json->encode(addProblrm());break;
+			case 11:echo $json->encode(updateDepartAdmin());break;
+			case 12:echo $json->encode(deleteDepartAdmin());break;
 			case 13:echo $json->encode(passCheck());break;
 		}
 	}

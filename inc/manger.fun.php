@@ -81,7 +81,72 @@ function login() {
 	}
 }
 
-function delete_depart_admin(){
+function addDepart() {
+	global $conn;
+	//检查变量是否存在
+	if (isset ($_POST['name'])) {
+		//获得变量的数据
+		$name = $_POST['name'];
+
+		//检查表单数据是否合法
+		if (strcmp($name, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
+
+		//防止sql注入
+		$name = mysql_real_escape_string($name);
+
+		//实现此函数功能前检查此操作是否合法
+		$sql = "select * from `depart` where name = '$name'";
+		$result = @ mysql_query($sql, $conn);
+		if ($result && mysql_num_rows($result) > 0) {
+			return output(3, "该分类已存在");
+		}
+
+		//实现本函数功能
+		$sql = "insert into `depart` (`name`) values('$name')";
+		$result = @ mysql_query($sql, $conn);
+		if ($result) {
+			return output(0, "分类添加成功");
+		} else {
+			return output(2, "数据库操作失败，请联系管理员");
+		}
+	} else {
+		return output(6, "表单填写不完整");
+	}
+}
+
+function updateDepart() {
+	global $conn;
+	//检查变量是否存在
+	if (isset ($_POST['name']) && isset ($_POST['id'])) {
+		//获得变量的数据
+		$name = $_POST['name'];
+		$id = $_POST['id'];
+
+		//检查表单数据是否合法
+		if (strcmp($name, "") == 0 || strcmp($id, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
+
+		//防止sql注入
+		$name = mysql_real_escape_string($name);
+		$id = mysql_real_escape_string($id);
+
+		//实现本函数功能
+		$sql = "UPDATE `depart` SET `name`='$name' WHERE `id` = '$id'";
+		$result = @ mysql_query($sql, $conn);
+		if ($result) {
+			return output(0, "分类名称更改成功");
+		} else {
+			return output(2, "数据库操作失败，请联系管理员");
+		}
+	} else {
+		return output(6, "表单填写不完整");
+	}
+}
+
+function deleteDepart() {
 	global $conn;
 	//检查变量是否存在
 	if (isset ($_POST['id'])) {
@@ -95,100 +160,171 @@ function delete_depart_admin(){
 
 		//防止sql注入
 		$id = mysql_real_escape_string($id);
+
+		if(!_deleteDepartAdmin($id)){
+			return output(6, "管理员删除失败");
+		}
 		
-		$sql = "select * from `depart` where `id` = '$id'";
+		if(!deleteMapDepart($id)){
+			return output(6, "删除小分类时出错");
+		}
+		
+
+		//实现本函数功能
+		$sql = "DELETE FROM `depart` WHERE `id` = '$id'";
 		$result = mysql_query($sql, $conn);
-		if(!$row = mysql_fetch_array($result)){
-			return output(6, "这个分类不存在，可能已被管理员删除！");
+		if ($result) {
+			return output(0, "分类删除成功");
+		} else {
+			return output(2, "数据库操作失败，请联系管理员");
 		}
-		$userId = $row["center"];
-		
-		$sql = "select count(*) num from `depart` where `center` = '$userId'";;
-		$result = mysql_query($sql, $conn);
-		$row = mysql_fetch_array($result);
-		$num = $row["num"];
-
-		if($num == 0){
-			return output(6, "这个用户可能不是管理员。");
-		}
-		
-		if($num == 1){
-			if(!mysql_query("UPDATE `user` SET `lev` = '1'  WHERE `id`= $userId", $conn)){
-				return output(6, "删除管理员时出错");
-			}
-		}
-		
-		if(mysql_query("UPDATE `depart` SET `center` = NULL WHERE `id`= $id", $conn)){
-			return output(0, "删除管理员成功");
-		}else{
-			return output(6, "删除管理员时出错");
-		}
-		
-		
-	}
-	
-	
-}
-
-function update_depart_admin() {
-	global $conn;
-
-	/*
-		id:$id   depart_id
-		email:$name depart manger email
-	*/
-
-	if (isset ($_POST['id']) && isset ($_POST['email']) && isset ($_POST['phone'])) {
-
-		//get post
-		$depart_id = $_POST['id'];
-		$email = $_POST['email'];
-		$phone = $_POST['phone'];
-
-		//check whether the data is null
-		if (strcmp($depart_id, "") == 0 || strcmp($email, "") == 0 || strcmp($phone, "") == 0 ) {
-			return output(6, "表单填写不完整");
-		}
-
-		if (!isEmail($email)) {
-			return output(4, "邮箱格式不正确");
-		}
-		
-		if (!isPhone($phone)) {
-			return output(4, "电话号码不正确");
-		}
-
-		//Prevent sql injection
-		$depart_id = mysql_real_escape_string($depart_id);
-		$email = mysql_real_escape_string($email);
-		$phone = mysql_real_escape_string($phone);
-
-		//update admin
-		$userId = getUserId($email);
-		
-		if($userId == 0){
-			return output(6, "添加新邮箱时数据库出错");
-		}
-		
-		if(!setUserLev($userId, "2", $phone)){
-			return output(6, "提升管理员权限时出错");
-		}
-		
-		$sql = "UPDATE `depart` SET `center` = '$userId' WHERE `id`= $depart_id";
-		
-		if(mysql_query($sql, $conn)){
-			return output(0, "设置管理员成功");
-		}else{
-			return output(6, "添加管理员时出错");
-		}
-
 	} else {
 		return output(6, "表单填写不完整");
 	}
-
 }
 
-function add_question() {
+function addBlock() {
+	global $conn;
+	//检查变量是否存在
+	if (isset ($_POST['name']) || isset ($_POST['name'])) {
+		//获得变量的数据
+		$name = $_POST['name'];
+		$departId = $_POST['depart_id'];
+
+		//检查表单数据是否合法
+		if (strcmp($name, "") == 0 || strcmp($departId, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
+
+		//防止sql注入
+		$name = mysql_real_escape_string($name);
+		$departId = mysql_real_escape_string($departId);
+
+		//实现此函数功能前检查此操作是否合法
+		$sql = "select * from `block` where name = '$name'";
+		$result = mysql_query($sql, $conn);
+		if ($result && mysql_num_rows($result) > 0) {
+			$row = mysql_fetch_array($result);
+			$blockId = $row["id"];
+			if(isExistMapDepartBlock($departId,$blockId)){
+				return output(6, "这个子分类已经存在");
+			}
+		}else{
+			//插入子分类
+			$sql = "insert into `block` (`name`) values('$name')";
+			$result = mysql_query($sql, $conn);
+
+			//得到子分类的id
+			$sql = "SELECT `id` FROM `block` WHERE name = '$name'";
+			$result = mysql_query($sql, $conn);
+			$row = mysql_fetch_array($result);
+			$blockId = $row['id'];
+		}
+
+		//建立大分类与子分类的联系
+		$result = addMapDepartBlock($departId, $blockId);
+
+		if ($result) {
+			return output(0, "子分类添加成功");
+		} else {
+			return output(2, "数据库操作失败，请联系管理员");
+		}
+	} else {
+		return output(6, "表单填写不完整");
+	}
+}
+
+function updateBlock() {
+	global $conn;
+	//检查变量是否存在
+	if (isset ($_POST['name']) && isset ($_POST['id'])) {
+		//获得变量的数据
+		$name = $_POST['name'];
+		$id = $_POST['id'];
+
+		//检查表单数据是否合法
+		if (strcmp($name, "") == 0 || strcmp($id, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
+
+		//防止sql注入
+		$name = mysql_real_escape_string($name);
+		$id = mysql_real_escape_string($id);
+
+		//实现本函数功能
+		$sql = "UPDATE `block` SET `name`='$name' WHERE `id` = '$id'";
+		$result = @ mysql_query($sql, $conn);
+		if ($result) {
+			return output(0, "子分类名称更改成功");
+		} else {
+			return output(2, "数据库操作失败，请联系管理员");
+		}
+	} else {
+		return output(6, "表单填写不完整");
+	}
+}
+
+function deleteBlock() {
+	global $conn;
+	//检查变量是否存在
+	if (isset ($_POST['id'])) {
+		//获得变量的数据
+		$id = $_POST['id'];
+
+		//检查表单数据是否合法
+		if (strcmp($id, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
+
+		//防止sql注入
+		$id = mysql_real_escape_string($id);
+
+		deleteMapBlock($id);
+
+		//实现本函数功能
+		$sql = "DELETE FROM `block` WHERE `id` = '$id'";
+		$result = @ mysql_query($sql, $conn);
+		if ($result) {
+			return output(0, "子分类删除成功");
+		} else {
+			return output(2, "数据库操作失败，请联系管理员");
+		}
+	} else {
+		return output(6, "表单填写不完整");
+	}
+}
+
+function getDepartBlock() {
+	global $conn;
+	$sql = "select * from depart where center != ''";
+	$result_depart = mysql_query($sql, $conn);
+
+	$ret = array ();
+
+	while ($row_depart = mysql_fetch_array($result_depart)) {
+
+		$depart["" . $row_depart['id'] . ""] = $row_depart['name'];
+
+		$depart = array ();
+		$block = "<option value='0'>请选择类型</option>\n";
+
+		$sql = "SELECT * FROM `block` WHERE id in (SELECT `block_id` FROM `map_block_depart` WHERE depart_id = '" . $row_depart['id'] . "')";
+		$result_block = mysql_query($sql, $conn);
+		while ($row_block = mysql_fetch_array($result_block)) {
+			$block .= "<option value='" . $row_block['id'] . "'>" . $row_block['name'] . "</option>\n";
+		}
+
+		$ret["" . $row_depart['id'] . ""] = array (
+			"depart_id" => $row_depart['id'],
+			"name" => $row_depart['name'],
+			"block" => $block
+		);
+
+	}
+	return $ret;
+}
+
+function addProblrm() {
 	global $conn;
 
 	/*			
@@ -284,179 +420,65 @@ function add_question() {
 	}
 }
 
-function addProblemTime($proId, $userId, $time, $state) {
+function updateDepartAdmin() {
 	global $conn;
-	$sql = "INSERT INTO `problem_time`(`pro_id`, `user_id`, `time`, `state`) VALUES ('$proId', '$userId', '$time', '$state')";
-	mysql_query($sql, $conn);
-}
 
-function get_depart_block() {
-	global $conn;
-	$sql = "select * from depart where center != ''";
-	$result_depart = mysql_query($sql, $conn);
+	/*
+		id:$id   depart_id
+		email:$name depart manger email
+	*/
 
-	$ret = array ();
+	if (isset ($_POST['id']) && isset ($_POST['email']) && isset ($_POST['phone'])) {
 
-	while ($row_depart = mysql_fetch_array($result_depart)) {
+		//get post
+		$depart_id = $_POST['id'];
+		$email = $_POST['email'];
+		$phone = $_POST['phone'];
 
-		$depart["" . $row_depart['id'] . ""] = $row_depart['name'];
-
-		$depart = array ();
-		$block = "<option value='0'>请选择类型</option>\n";
-
-		$sql = "SELECT * FROM `block` WHERE id in (SELECT `block_id` FROM `map_block_depart` WHERE depart_id = '" . $row_depart['id'] . "')";
-		$result_block = mysql_query($sql, $conn);
-		while ($row_block = mysql_fetch_array($result_block)) {
-			$block .= "<option value='" . $row_block['id'] . "'>" . $row_block['name'] . "</option>\n";
-		}
-
-		$ret["" . $row_depart['id'] . ""] = array (
-			"depart_id" => $row_depart['id'],
-			"name" => $row_depart['name'],
-			"block" => $block
-		);
-
-	}
-	return $ret;
-}
-
-function delete_block() {
-	global $conn;
-	//检查变量是否存在
-	if (isset ($_POST['id'])) {
-		//获得变量的数据
-		$id = $_POST['id'];
-
-		//检查表单数据是否合法
-		if (strcmp($id, "") == 0) {
+		//check whether the data is null
+		if (strcmp($depart_id, "") == 0 || strcmp($email, "") == 0 || strcmp($phone, "") == 0 ) {
 			return output(6, "表单填写不完整");
 		}
 
-		//防止sql注入
-		$id = mysql_real_escape_string($id);
-
-		center_map_block($id);
-
-		//实现本函数功能
-		$sql = "DELETE FROM `block` WHERE `id` = '$id'";
-		$result = @ mysql_query($sql, $conn);
-		if ($result) {
-			return output(0, "子分类删除成功");
-		} else {
-			return output(2, "数据库操作失败，请联系管理员");
+		if (!isEmail($email)) {
+			return output(4, "邮箱格式不正确");
 		}
-	} else {
-		return output(6, "表单填写不完整");
-	}
-}
-
-function update_block() {
-	global $conn;
-	//检查变量是否存在
-	if (isset ($_POST['name']) && isset ($_POST['id'])) {
-		//获得变量的数据
-		$name = $_POST['name'];
-		$id = $_POST['id'];
-
-		//检查表单数据是否合法
-		if (strcmp($name, "") == 0 || strcmp($id, "") == 0) {
-			return output(6, "表单填写不完整");
+		
+		if (!isPhone($phone)) {
+			return output(4, "电话号码不正确");
 		}
 
-		//防止sql注入
-		$name = mysql_real_escape_string($name);
-		$id = mysql_real_escape_string($id);
-
-		//实现本函数功能
-		$sql = "UPDATE `block` SET `name`='$name' WHERE `id` = '$id'";
-		$result = @ mysql_query($sql, $conn);
-		if ($result) {
-			return output(0, "子分类名称更改成功");
-		} else {
-			return output(2, "数据库操作失败，请联系管理员");
-		}
-	} else {
-		return output(6, "表单填写不完整");
-	}
-}
-
-function add_block() {
-	global $conn;
-	//检查变量是否存在
-	if (isset ($_POST['name']) || isset ($_POST['name'])) {
-		//获得变量的数据
-		$name = $_POST['name'];
-		$depart_id = $_POST['depart_id'];
-
-		//检查表单数据是否合法
-		if (strcmp($name, "") == 0 || strcmp($depart_id, "") == 0) {
-			return output(6, "表单填写不完整");
-		}
-
-		//防止sql注入
-		$name = mysql_real_escape_string($name);
+		//Prevent sql injection
 		$depart_id = mysql_real_escape_string($depart_id);
+		$email = mysql_real_escape_string($email);
+		$phone = mysql_real_escape_string($phone);
 
-		//实现此函数功能前检查此操作是否合法
-		$sql = "select * from `block` where name = '$name'";
-		$result = mysql_query($sql, $conn);
-		if ($result && mysql_num_rows($result) > 0) {
-			return output(3, "该分类已存在");
+		//update admin
+		$userId = getUserId($email);
+		
+		if($userId == 0){
+			return output(6, "添加新邮箱时数据库出错");
+		}
+		
+		if(!setUserLev($userId, "2", $phone)){
+			return output(6, "提升管理员权限时出错");
+		}
+		
+		$sql = "UPDATE `depart` SET `center` = '$userId' WHERE `id`= $depart_id";
+		
+		if(mysql_query($sql, $conn)){
+			return output(0, "设置管理员成功");
+		}else{
+			return output(6, "添加管理员时出错");
 		}
 
-		//插入子分类
-		$sql = "insert into `block` (`name`) values('$name')";
-		$result = mysql_query($sql, $conn);
-
-		//得到子分类的id
-		$sql = "SELECT `id` FROM `block` WHERE name = '$name'";
-		$result = mysql_query($sql, $conn);
-		$row = mysql_fetch_array($result);
-		$block_id = $row['id'];
-
-		//建立大分类与子分类的联系
-		$result = map_block_depart($block_id, $depart_id);
-
-		if ($result) {
-			return output(0, "子分类添加成功");
-		} else {
-			return output(2, "数据库操作失败，请联系管理员");
-		}
 	} else {
 		return output(6, "表单填写不完整");
 	}
+
 }
 
-function center_map_block_depart($block_id, $depart_id) {
-	global $conn;
-	$sql = "DELETE FROM `map_block_depart` WHERE `block_id` = '$block_id' and `depart_id` = '$depart_id'";
-	$result = mysql_query($sql, $conn);
-	return $result;
-}
-
-function center_map_block($block_id) {
-	global $conn;
-	$sql = "DELETE FROM `map_block_depart` WHERE `block_id` = '$block_id' ";
-	$result = mysql_query($sql, $conn);
-	return $result;
-}
-
-function center_map_depart($depart_id) {
-	global $conn;
-	$sql = "DELETE FROM `map_block_depart` WHERE `depart_id` = '$depart_id'";
-	$result = mysql_query($sql, $conn);
-	return $result;
-}
-
-function map_block_depart($block_id, $depart_id) {
-	global $conn;
-
-	$sql = "INSERT INTO `map_block_depart`(`block_id`, `depart_id`) VALUES ('$block_id','$depart_id')";
-	$result = mysql_query($sql, $conn);
-	return $result;
-}
-
-function delete_depart() {
+function deleteDepartAdmin(){
 	global $conn;
 	//检查变量是否存在
 	if (isset ($_POST['id'])) {
@@ -467,92 +489,16 @@ function delete_depart() {
 		if (strcmp($id, "") == 0) {
 			return output(6, "表单填写不完整");
 		}
-
 		//防止sql注入
 		$id = mysql_real_escape_string($id);
-
-		center_map_depart($id);
-
-		//实现本函数功能
-		$sql = "DELETE FROM `depart` WHERE `id` = '$id'";
-		$result = mysql_query($sql, $conn);
-		if ($result) {
-			return output(0, "分类删除成功");
-		} else {
-			return output(2, "数据库操作失败，请联系管理员");
+		
+		if(_deleteDepartAdmin($id)){
+			return output(6, "管理员删除成功");
+		}else{
+			return output(6, "管理员删除失败");
 		}
-	} else {
-		return output(6, "表单填写不完整");
-	}
+	}	
 }
-
-function update_depart() {
-	global $conn;
-	//检查变量是否存在
-	if (isset ($_POST['name']) && isset ($_POST['id'])) {
-		//获得变量的数据
-		$name = $_POST['name'];
-		$id = $_POST['id'];
-
-		//检查表单数据是否合法
-		if (strcmp($name, "") == 0 || strcmp($id, "") == 0) {
-			return output(6, "表单填写不完整");
-		}
-
-		//防止sql注入
-		$name = mysql_real_escape_string($name);
-		$id = mysql_real_escape_string($id);
-
-		//实现本函数功能
-		$sql = "UPDATE `depart` SET `name`='$name' WHERE `id` = '$id'";
-		$result = @ mysql_query($sql, $conn);
-		if ($result) {
-			return output(0, "分类名称更改成功");
-		} else {
-			return output(2, "数据库操作失败，请联系管理员");
-		}
-	} else {
-		return output(6, "表单填写不完整");
-	}
-}
-
-function add_depart() {
-	global $conn;
-	//检查变量是否存在
-	if (isset ($_POST['name'])) {
-		//获得变量的数据
-		$name = $_POST['name'];
-
-		//检查表单数据是否合法
-		if (strcmp($name, "") == 0) {
-			return output(6, "表单填写不完整");
-		}
-
-		//防止sql注入
-		$name = mysql_real_escape_string($name);
-
-		//实现此函数功能前检查此操作是否合法
-		$sql = "select * from `depart` where name = '$name'";
-		$result = @ mysql_query($sql, $conn);
-		if ($result && mysql_num_rows($result) > 0) {
-			return output(3, "该分类已存在");
-		}
-
-		//实现本函数功能
-		$sql = "insert into `depart` (`name`) values('$name')";
-		$result = @ mysql_query($sql, $conn);
-		if ($result) {
-			return output(0, "分类添加成功");
-		} else {
-			return output(2, "数据库操作失败，请联系管理员");
-		}
-	} else {
-		return output(6, "表单填写不完整");
-	}
-}
-
-
-
 
 
 function passCheck(){

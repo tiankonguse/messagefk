@@ -11,9 +11,9 @@ function isPhone($phone){
 
 function isExistUser($email){
 	global $conn;
-	
+
 	if(!isEmail($email))return false;
-	
+
 	$sql = "select * from user where email = '$email'";
 	$resultUser = mysql_query($sql, $conn);
 	if (!($row = mysql_fetch_array($resultUser))) {
@@ -36,7 +36,7 @@ function addUser($email, $lev) {
 
 
 function getUserId($email) {
-//$email should be security and correct.
+	//$email should be security and correct.
 
 	global $conn;
 	$sql = "select * from user where email = '$email'";
@@ -54,15 +54,14 @@ function getUserId($email) {
 
 function setUserLev($userId, $lev, $phone) {
 	global $conn;
-	
+
 	$userId = intval($userId);
 	$lev = intval($lev);
-	$phone = intval($phone);
-	
+
 	if($userId == 0 || $lev == 0 || !(isPhone($phone))){
 		return false;
 	}
-	
+
 	$sql = "UPDATE `user` SET `lev` = '$lev' ,`phone` = '$phone' WHERE `id`= $userId";
 	return mysql_query($sql, $conn);
 }
@@ -110,8 +109,8 @@ function getBlocktName($blockId){
 function getStateTime($problemId, $state){
 	global $conn;
 	$problemId = intval($problemId);
-	$state = intval($state);	
-	
+	$state = intval($state);
+
 	$sql = "select * from `problem_time` where `pro_id` = '$problemId' and `state` = '$state'";
 	$result = mysql_query($sql ,$conn);
 	if($row = mysql_fetch_array($result)){
@@ -124,7 +123,7 @@ function getStateTime($problemId, $state){
 function getUserEmail($userId){
 	global $conn;
 	$userId = intval($userId);
-	
+
 	$sql = "select * from `user` where `id` = '$userId'";
 	$result = mysql_query($sql ,$conn);
 	if($row = mysql_fetch_array($result)){
@@ -146,4 +145,80 @@ function getStateHtml($state){
 	global  $stateArray;
 	$state = intval($state);
 	return $stateArray[$state%7];
+}
+
+
+function deleteMapDepart($departId) {
+	global $conn;	
+	$sql = "DELETE FROM `map_block_depart` WHERE `depart_id` = '$departId'";
+	return mysql_query($sql, $conn);
+}
+
+function deleteMapBlock($blockId) {
+	global $conn;
+	$sql = "DELETE FROM `map_block_depart` WHERE `block_id` = '$blockId'";
+	$result1 = mysql_query($sql, $conn);
+	
+	$sql = "DELETE FROM `block` WHERE `id` = '$blockId' ";
+	$result2 = mysql_query($sql, $conn);
+	return $result2 && $result1;
+}
+
+function deleteMapDepartBlock($departId, $blockId) {
+	global $conn;
+	$sql = "DELETE FROM `map_block_depart` WHERE `block_id` = '$blockId' and `depart_id` = '$departId'";
+	return mysql_query($sql, $conn);
+}
+
+function addMapDepartBlock($departId, $blockId) {
+	global $conn;
+	$sql = "INSERT INTO `map_block_depart`(`block_id`, `depart_id`) VALUES ('$blockId','$departId')";
+	return mysql_query($sql, $conn);
+}
+
+function addProblemTime($proId, $userId, $time, $state) {
+	global $conn;
+	$sql = "INSERT INTO `problem_time`(`pro_id`, `user_id`, `time`, `state`) VALUES ('$proId', '$userId', '$time', '$state')";
+	mysql_query($sql, $conn);
+}
+
+function _deleteDepartAdmin($departId){
+	global $conn;
+	
+	$sql = "select * from `depart` where `id` = '$departId'";
+	$result = mysql_query($sql, $conn);
+	if(!$row = mysql_fetch_array($result)){
+		return false;
+	}
+	
+	$userId = $row["center"];
+
+	$sql = "select count(*) num from `depart` where `center` = '$userId'";;
+	$result = mysql_query($sql, $conn);
+	$row = mysql_fetch_array($result);
+	$num = $row["num"];
+
+	if($num == 0){
+		return true;
+	}
+
+	if($num == 1){
+		if(!mysql_query("UPDATE `user` SET `lev` = '1'  WHERE `id`= $userId", $conn)){
+			return false;
+		}
+	}
+
+	if(mysql_query("UPDATE `depart` SET `center` = NULL WHERE `id`= $departId", $conn)){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function isExistMapDepartBlock($departId, $blockId){
+	global $conn;
+	$sql = "select count(*) num  from `map_block_depart` where  depart_id = '$departId' and  block_id = '$blockId' ";
+	$result = mysql_query($sql, $conn);
+	$row = mysql_fetch_array($result);
+	return $row["num"];
 }
