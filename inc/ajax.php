@@ -1,18 +1,10 @@
 <?php
-/*
- inc/ajax.php?state=
- 定义一个操作
- 1 => get_manger_depart
- 2 => get_admin_wait_check_problem
- 3 => get_admin_wait_accept_problem
- 4 => get_admin_now_fixxing_problem
- */
-
 session_start();
 require("init.php");
 require("JSON.php");
 $json = new Services_JSON();
-require_once("ajax.fun.php");
+require("function.php");
+require("ajax.fun.php");
 
 if((!$conn || !$result) && $ret){
 	// db error
@@ -24,7 +16,7 @@ if((!$conn || !$result) && $ret){
 }else{
 	$code = $_POST["state"];
 	$name = $_POST["name"];
-	
+
 	if(strcmp($name,"nav_admin") == 0){
 		switch($code){
 			case 1 :echo $json->encode(get_manger_depart());break;
@@ -36,11 +28,24 @@ if((!$conn || !$result) && $ret){
 		echo $json->encode(get_manger_block($code));
 	}else if(strcmp($name,"nav_user") == 0){
 		switch($code){
-			case 1 :echo $json->encode(get_user_all_problem());break;
-			case 2 :echo $json->encode(get_user_wait_pass_problem());break;
+			case 1 :echo $json->encode(getUserAllProblem());break;
+			case 2 :echo $json->encode(getUserWaitCheckProblem());break;
+			case 3 :echo $json->encode(getUserWaitAcceptProblem());break;
+			case 4 :echo $json->encode(getUserNowFixingProblem());break;
+			case 5 :echo $json->encode(getUserWaitEvaluateProblem());break;
+			case 6 :echo $json->encode(getUserFinishProblem());break;
+			case 7 :echo $json->encode(getUserNotPassProblem());break;
+		}
+	}else if(strcmp($name, "nav_index")== 0){
+		switch($code){
+			case 1 :echo $json->encode(getIndexAllProblem());break;
+			case 2 :echo $json->encode(getIndexWaitAcceptProblem());break;
+			case 3 :echo $json->encode(getIndexNowFixingProblem());break;
+			case 4 :echo $json->encode(getIndexWaitEvaluateProblem());break;
+			case 5 :echo $json->encode(getIndexFinishProblem());break;
 		}
 	}
-	
+
 
 }
 require_once("end.php");

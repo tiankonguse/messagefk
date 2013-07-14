@@ -1,8 +1,9 @@
 <?php
 session_start();
-require_once("inc/init.php");
+require("inc/init.php");
 $title = "信息反馈系统提交問題";
-include_once('inc/header.inc.php');
+require('inc/header.inc.php');
+require('inc/function.php');
 
 $messagefk_id    = $_SESSION['messagefk_id'];
 $messagefk_email = $_SESSION['messagefk_email'];
@@ -25,8 +26,39 @@ if(!$row=mysql_fetch_array($result)){
 	header('Location:index.php');
 }
 
+$problemId = $id;
+
+$userId = $row['user_id'];
+$userEmail = getUserEmail($userId);
+$userName = $row['realName'];
+$phone = $row['phone'];
 
 
+$title = $row['title'];
+$content = $row['content'];
+
+
+
+$departId = $row['depart_id'];
+$departName = getDepartName($departId);
+$departMangerId = getDepartMangerId($departId);
+
+
+$blockId = $row['block_id'];
+$blockName = getBlocktName($blockId);
+
+$phone = $row['phone'];
+
+$state = $row['state'];
+$suggestTime = getStateTime($problemId,1);
+
+$formId = date("Ymdhis",$suggestTime) . $problemId;
+
+$suggestTime = date("Y-m-d h:i:s",$suggestTime);
+
+$stateHtml = getStateHtml($state);
+
+$notPass = 6;
 
 $type  =  2;
 ?>
@@ -40,39 +72,39 @@ $type  =  2;
 		<div class="flowstep" id="J_Flowstep">
 			<ol class="flowstep-4">
 				<li class="step-first">
-					<div class="step-1 step-down">
+					<div class="step-down">
 						<div class="step-name">提交问题</div>
 						<div class="step-no"></div>
 					</div>
 				</li>
 				<li>
-					<div class="step-2 step-down">
+					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
 						<div class="step-name">审核通过</div>
 						<div class="step-no"></div>
 					</div>
 
 				</li>
 				<li>
-					<div class="step-3 step-down">
+					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
 						<div class="step-name">通过受理</div>
 						<div class="step-no"></div>
 					</div>
 
 				</li>
 				<li>
-					<div class="step-4 step-down">
+					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
 						<div class="step-name">正在維修中</div>
 						<div class="step-no"></div>
 					</div>
 				</li>
 				<li>
-					<div class="step-5 step-down">
+					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
 						<div class="step-name">維修完成</div>
 						<div class="step-no"></div>
 					</div>
 				</li>
 				<li class="step-last">
-					<div class="step-6 step-down">
+					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
 						<div class="step-name">评价完成</div>
 						<div class="step-no"></div>
 					</div>
@@ -83,104 +115,88 @@ $type  =  2;
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
 					<tr>
-						<td class="problem-table-head">申报信息</td>
+						<td  colspan="6"  class="problem-table-head">申报信息</td>
 					</tr>
 					<tr>
-						<td>单据号:</td>
-						<td>      </td>
-						<td class="bxtitle">状态：</td>
-						<td><span style="color: Red;">未审核</span>
+						<td>单据号:</td><td><?php echo $formId;?></td>
+						<td>状态：</td><td><?php echo $stateHtml;?></td>
+						<td>申报时间：</td> <td><?php echo $suggestTime;?></td>
+					</tr>
+					<tr>
+						<td>申报人：</td> <td><?php echo $userName;?></td>
+						<td>申报电话：</td> <td><?php echo $phone;?></td>
+						<td>审核时间：</td> <td></td>
+					</tr>
+					<tr>
+						<td>服务类型：</td> <td><?php echo $departName;?></td>
+						<td>服务区域：</td> <td><?php echo $blockName;?></td>
+						<td>操作</td> <td>
+
+<?php 
+	$stateHtml = "";
+	if($state == 1 && $messagefk_lev == 3){
+		$stateHtml = "						
+			<button class='btn btn-info' onclick=\"clickPassCheck($problemId)\">审核通过</button>
+			<button class='btn btn-danger' onclick=\"clickNotPassCheck($problemId)\">审核不通过</button>
+		";
+	}
+	echo $stateHtml;
+?>
+
+
 						</td>
-						<td class="bxtitle">申报人：</td>
-						<td>李***</td>
 					</tr>
 					<tr>
-						<td class="bxtitle">申报电话：</td>
-						<td>1879*******</td>
-						<td class="bxtitle">申报时间：</td>
-						<td>2013-7-12 17:16:56</td>
-						<td class="bxtitle">响应时间：</td>
-						<td><span style="color: Red;"> 1002 </span>
-						</td>
+						<td>申报标题：</td> <td colspan="5"><?php echo $title;?></td>
 					</tr>
 					<tr>
-						<td class="bxtitle">服务类型：</td>
-						<td>维修</td>
-						<td class="bxtitle">服务项目：</td>
-						<td>灯维修</td>
-						<td class="bxtitle">服务区域：</td>
-						<td>长安校区教学区</td>
-					</tr>
-					<tr>
-						<td class="bxtitle">区域类型：</td>
-						<td>有偿服务</td>
-						<td class="bxtitle">报修地址：</td>
-						<td colspan="3" style="width: 500px;">致****</td>
-					</tr>
-					<tr id="ycfw">
-						<td class="bxtitle">申报部门：</td>
-						<td>致知楼1304</td>
-						<td class="bxtitle">预约时间：</td>
-						<td colspan="3"></td>
-					</tr>
-					<tr>
-						<td class="bxtitle">申报内容：</td>
+						<td>申报内容</td>
 						<td colspan="5" style="width: 500px; height: 80px;" valign="top">
-							<p>老师您好，我们实验室的灯管坏了，请您派人给我们维修一下，谢谢老师！</p>
+							<pre><?php echo $content;?></pre>
 						</td>
 					</tr>
+					
 					<tr>
-						<td class="bxtitle">备注：</td>
-						<td colspan="5" style="width: 500px;"></td>
+						<td colspan="6"  class="problem-table-head">*付费信息</td>
 					</tr>
 					<tr>
-						<td colspan="6" style="font-weight: bold; color: #2b7eca;"><em>*</em>付费信息</td>
+						<td >收费描述</td><td  colspan="3" style="height: 80px;" ></td>
+						<td>金额：</td><td></td>
+					</tr>
+					
+					<tr>
+						<td colspan="6"  class="problem-table-head">*受理信息</td>
 					</tr>
 					<tr>
-						<td class="bxtitle">收费类型：</td>
+						<td>受理人邮箱：</td> <td></td>
+						<td>受理时间：</td><td></td>
 						<td></td>
-						<td class="bxtitle">金额：</td>
-						<td colspan="3">0.00</td>
-					</tr>
-					<tr>
-						<td colspan="6" style="font-weight: bold; color: #2b7eca;"><em>*</em>受理信息</td>
-					</tr>
-					<tr>
-						<td class="bxtitle">受理人：</td>
-						<td></td>
-						<td class="bxtitle">受理时间：</td>
-						<td></td>
-						<td class="bxtitle">承修单位：</td>
 						<td></td>
 					</tr>
 					<tr>
-						<td class="bxtitle">承修人：</td>
-						<td></td>
-						<td class="bxtitle">派出人：</td>
-						<td></td>
-						<td class="bxtitle">派出时间：</td>
-						<td></td>
+						<td>维修人：</td><td></td>
+						<td>派出时间：</td><td></td>
+						<td></td><td></td>
 					</tr>
 
 					<tr>
-						<td class="bxtitle">完成时间：</td>
-						<td></td>
-						<td class="bxtitle">用时(分)</td>
-						<td>0</td>
-						<td class="bxtitle">客户建议：</td>
-						<td></td>
+						<td>完成时间：</td><td></td>
+						<td>用时(分)</td><td></td>
+						<td></td><td></td>
 					</tr>
 					<tr>
-						<td class="bxtitle">维修效果：</td>
+						<td>维修效果：</td>
 						<td colspan="5" style="width: 500px; height: 80px;" valign="top"></td>
 					</tr>
-					<tr id="hf_title">
-						<td colspan="6" style="font-weight: bold; color: #2b7eca;"><em>*</em>服务回访</td>
+					
+					<tr>
+						<td colspan="6"  class="problem-table-head">*服务评价</td>
 					</tr>
 					<tr id="hf_cotent">
-						<td class="bxtitle">回访结果:</td>
+						<td>服务打分:</td>
 						<td class="bxtitle1">
-							<div style="float: left; display: none;" id="hf_star">
+<?php if($state == 4){?>
+							<div style="float: left;  id="hf_star">
 								<div id="grade-box" class="grade-box">
 									<ul>
 										<li id="1" title="1星"></li>
@@ -259,32 +275,27 @@ $type  =  2;
                             });
                         </script>
 							</div>
-							<div style="float: left; line-height: 25px;">(待回访)</div>
+<?php }?>
 						</td>
-						<td class="bxtitle">回访人:</td>
-						<td class="bxtitle1" id="hfr"></td>
-						<td class="bxtitle">回访时间:</td>
-						<td class="bxtitle1" id="hfsj"></td>
+						<td>回访人:</td><td></td>
+						<td>回访时间:</td><td></td>
 					</tr>
-					<tr id="hf_bz" style="display: none;">
-						<td style="font-weight: bold; text-align: right;">回访建议：</td>
-						<td colspan="5" style="width: 500px; height: 80px;"><textarea
-								id="wx_hfjy" style="width: 810px; height: 80px;"></textarea></td>
-					</tr>
+					
+					
 					<tr>
-						<td colspan="6" style="font-weight: bold; color: #2b7eca;"><em>*</em>服务反馈</td>
+						<td>服务评价</td>
+						<td colspan="5" style="width: 500px; height: 80px;" valign="top">
+							
+						</td>
 					</tr>
-					<tr>
-						<td class="bxtitle" style="font-weight: bold; color: #2b7eca;"><em>*</em>评论内容：</td>
-						<td colspan="5" style="width: 520px; height: 200px;"></td>
-					</tr>
+
 				</tbody>
 			</table>
 
 
 		</div>
 	</div>
-	<script src="js/suggest.js<?php echo "?t=".time ();?>"></script>
+	<script src="js/problem.js<?php echo "?t=".time ();?>"></script>
 	<script>
 $(document).ready(function(){
 	$(".nav-top ul li.nav<?php echo $type; ?>").addClass("active");

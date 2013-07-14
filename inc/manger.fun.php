@@ -593,4 +593,40 @@ function login() {
 		return output(6, "表单填写不完整");
 	}
 }
+
+function passCheck(){
+	global $conn;
+	if (isset ($_POST['id'])) {
+		//获得表单数据
+		$problemId = intval($_POST['id']);
+
+		//检查表单数据是否合法
+		if ($problemId == 0) {
+			return output(6, "表单填写不完整");
+		}
+		
+		
+		
+
+		//操作数据库
+		$sql = "select * from problem where id = '$problemId'";
+		
+		
+		
+		$sql = "select * from user where email = '$email'";
+		$result = @ mysql_query($sql, $conn);
+		if ($result && $row = mysql_fetch_array($result)) {
+			$_SESSION['messagefk_id'] = $row['id'];
+			$_SESSION['messagefk_email'] = $row['email'];
+			$_SESSION['messagefk_lev'] = $row['lev'];
+			return output(0, "登录成功");
+		} else {
+			return output(12, "用户名或密码错误");
+		}
+
+	} else {
+		return output(6, "表单填写不完整");
+	}
+}
+
 ?>

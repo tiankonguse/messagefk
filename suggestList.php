@@ -2,6 +2,7 @@
 session_start();
 require_once("inc/init.php");
 $title = "我的反馈问题列表";
+include_once('inc/function.php');
 include_once('inc/header.inc.php');
 
 $messagefk_id    = $_SESSION['messagefk_id'];
@@ -32,37 +33,37 @@ $type  =  2;
 		<div class="row">
 			<div class="span2 bs-docs-sidebar">
 				<ul class="nav nav-list bs-docs-sidenav">
-					<li class="manger_nav1 active">
+					<li class="user_nav1 active">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',1);">
 							<i class="icon-chevron-right"></i> 全部
 						</a>
 					</li>
-					<li  class="manger_nav2">
+					<li  class="user_nav2">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',2);">
-							<i class="icon-chevron-right"></i> 正在审核中
+							<i class="icon-chevron-right"></i> 等待审核中
 						</a>
 					</li>
-					<li  class="manger_nav3">
+					<li  class="user_nav3">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',3);">
-							<i class="icon-chevron-right"></i> 正在受理中
+							<i class="icon-chevron-right"></i> 等待受理中
 						</a>
 					</li>
-					<li  class="manger_nav4">
+					<li  class="user_nav4">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',4);">
 							<i class="icon-chevron-right"></i> 正在维修中
 						</a>
 					</li>
-					<li  class="manger_nav5">
+					<li  class="user_nav5">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',5);">
 							<i class="icon-chevron-right"></i> 等待评价中
 						</a>
 					</li>
-					<li  class="manger_nav6">
+					<li  class="user_nav6">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',6);">
 							<i class="icon-chevron-right"></i> 完成的
 						</a>
 					</li>
-					<li  class="manger_nav7">
+					<li  class="user_nav7">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',7);">
 							<i class="icon-chevron-right"></i> 未通过审核
 						</a>
@@ -95,12 +96,10 @@ function ajax_fun(name,state){
 function getHtml(name,state){
 	if(name == 'nav_user'){
 		remove_active();
-		$(".manger_admin_nav"+state).addClass("active");
+		$(".user_nav"+state).addClass("active");
 		ajax_fun(name,state);
 	}
 }
-
-
 
 $(document).ready(function(){
 	$(".nav-top ul li.nav<?php echo $type; ?>").addClass("active");
@@ -109,22 +108,3 @@ $(document).ready(function(){
 </script>
 <?php include_once('inc/footer.inc.php'); ?>
 <?php include_once('inc/end.php'); ?>
-
-<?php 
-	function getDepartName($depart_id){
-		global $conn;
-		$sql = "select * from `depart` where `id` = '$depart_id'";
-		$result = mysql_query($sql ,$conn);
-		$row = mysql_fetch_array($result);
-		return $row['name'];
-	}
-	
-	function getTime($pro_id, $state){
-		global $conn;
-		$sql = "select * from `problem_time` where `pro_id` = '$pro_id' and `state` = '$state'";
-		$result = mysql_query($sql ,$conn);
-		$row = mysql_fetch_array($result);
-		return $row['time'];
-	}
-	
-?>
