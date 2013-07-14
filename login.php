@@ -4,11 +4,11 @@ require_once("inc/init.php");
 $title = "信息反馈系统登陆页面";
 include_once('inc/header.inc.php');
 
-$messagefk_id    = $_SESSION['messagefk_id'];
-$messagefk_email = $_SESSION['messagefk_email'];
-$messagefk_lev   = $_SESSION['messagefk_lev'];
-if(strcmp($messagefk_lev, "") == 0){
-	$messagefk_lev = 0;
+$messagefkId    = $_SESSION['messagefkId'];
+$messagefkEmail = $_SESSION['messagefkEmail'];
+$messagefkLev   = $_SESSION['messagefkLev'];
+if(strcmp($messagefkLev, "") == 0){
+	$messagefkLev = 0;
 }else{
 	header('Location:index.php');
 }
@@ -55,7 +55,7 @@ $type  =  4;
 			  
 		</div>
 	</div>
-
+</div>
  
 <div id="addevent"  class="modal hide fade">
 	<div class="form-horizontal">

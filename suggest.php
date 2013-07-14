@@ -6,10 +6,10 @@ include_once('inc/header.inc.php');
 
 
 
-$messagefk_id    = $_SESSION['messagefk_id'];
-$messagefk_email = $_SESSION['messagefk_email'];
-$messagefk_lev   = $_SESSION['messagefk_lev'];
-if(strcmp($messagefk_lev, "") == 0){
+$messagefkId    = $_SESSION['messagefkId'];
+$messagefkEmail = $_SESSION['messagefkEmail'];
+$messagefkLev   = $_SESSION['messagefkLev'];
+if(strcmp($messagefkLev, "") == 0){
 	header('Location:login.php?messageCode=1');
 }
 
@@ -66,7 +66,7 @@ $type  =  1;
 					<li>
 						<p>
 		                    	邮&nbsp;&nbsp;箱：
-							<input id="email" name="email" type="text" value="<?php echo $messagefk_email;?>" disabled >
+							<input id="email" name="email" type="text" value="<?php echo $messagefkEmail;?>" disabled >
 							<i class="text-error width1">*</i>
 							<em id="_txt_email">请填写邮箱</em>
 						</p>     

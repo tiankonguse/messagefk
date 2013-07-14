@@ -1,7 +1,8 @@
 <?php
 session_start();
-unset($_SESSION['messagefk_id']);
-unset($_SESSION['messagefk_email']);
-unset($_SESSION['messagefk_lev']);
+unset($_SESSION['messagefkId']);
+unset($_SESSION['messagefkEmail']);
+unset($_SESSION['messagefkLev']);
 header('Location:index.php');
 ?>
+

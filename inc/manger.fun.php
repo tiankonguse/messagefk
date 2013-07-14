@@ -1,40 +1,84 @@
 <?php
 
-function isEmail($email){
-	return preg_match('/^.+?@.+?\..+?$/', $email);
-}
-
-function isPhone($phone){
-	return preg_match('/^[0-9]{11,11}$/', $phone);
-}
-
-//$email is security and correct. email is not exit.
-function addUser($email, $lev) {
+function register() {
 	global $conn;
-	$sql = "insert into `user` (`email`,`lev`) values('$email', '$lev')";
-	return mysql_query($sql, $conn);
-}
+	//检查变量是否存在
+	if (isset ($_POST['email']) && isset ($_POST['password1']) && isset ($_POST['password2'])) {
+		//获得表单数据
+		$email = $_POST['email'];
+		$password1 = $_POST['password1'];
+		$password2 = $_POST['password2'];
 
-//$email is security and correct.
-function getUserId($email) {
-	global $conn;
-	$sql = "select * from user where email = '$email'";
-	$result_user = mysql_query($sql, $conn);
+		//检查表单数据是否合法
+		if (strcmp($email, "") == 0 || strcmp($password1, "") == 0 || strcmp($password2, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
 
-	if (!($row = mysql_fetch_array($result_user))) {
-		//first add user
-		if(!addUser($email, "1")) return 0;
-		$sql = "select * from user where email = '$email'";
-		$result_user = mysql_query($sql, $conn);
-		$row = mysql_fetch_array($result_user);
+		if (strcmp($password1, $password2) != 0) {
+			return output(5, "输入的两次密码不同");
+		}
+
+		if (!isEmail($email)) {
+			return output(4, "邮箱格式不正确");
+		}
+
+		//防止sql注入
+		$email = mysql_real_escape_string($email);
+		$password = sha1(SALT . $password1);
+
+		//实现此函数功能前检查此操作是否合法
+		if (isExistUser($email)) {
+			return output(3, "该邮箱已存在");
+		}
+
+		//实现本函数功能
+		if(addUser($email,1)){
+			$_SESSION['email'] = $email;
+			$_SESSION['lev'] = 0;
+			return output(0, "注册成功");
+		}else{
+			return output(2, "新用户添加失败，请联系管理员");
+		}
+	} else {
+		return output(6, "表单填写不完整");
 	}
-	return $row['id'];
 }
 
-function setUserLev($userId, $lev, $phone) {
+function login() {
 	global $conn;
-	$sql = "UPDATE `user` SET `lev` = '$lev' ,`phone` = '$phone' WHERE `id`= $userId";
-	return mysql_query($sql, $conn);
+	if (isset ($_POST['email']) && isset ($_POST['password'])) {
+		//获得表单数据
+		$email = $_POST['email'];
+		$password = $_POST['password'];
+
+		//检查表单数据是否合法
+		if (strcmp($email, "") == 0 || strcmp($password, "") == 0) {
+			return output(6, "表单填写不完整");
+		}
+
+		if (!isEmail($email)) {
+			return output(4, "邮箱格式不正确");
+		}
+
+		//防止sql注入
+		$email = mysql_real_escape_string($email);
+		$password = sha1(SALT . $password);
+
+		//操作数据库
+		$sql = "select * from user where email = '$email'";
+		$result = @ mysql_query($sql, $conn);
+		if ($result && $row = mysql_fetch_array($result)) {
+			$_SESSION['messagefkId'] = $row['id'];
+			$_SESSION['messagefkEmail'] = $row['email'];
+			$_SESSION['messagefkLev'] = $row['lev'];
+			return output(0, "登录成功");
+		} else {
+			return output(12, "用户名或密码错误");
+		}
+
+	} else {
+		return output(6, "表单填写不完整");
+	}
 }
 
 function delete_depart_admin(){
@@ -507,92 +551,9 @@ function add_depart() {
 	}
 }
 
-function register() {
-	global $conn;
-	//检查变量是否存在
-	if (isset ($_POST['email']) && isset ($_POST['password1']) && isset ($_POST['password2'])) {
-		//获得表单数据
-		$email = $_POST['email'];
-		$password1 = $_POST['password1'];
-		$password2 = $_POST['password2'];
 
-		//检查表单数据是否合法
-		if (strcmp($email, "") == 0 || strcmp($password1, "") == 0 || strcmp($password2, "") == 0) {
-			return output(6, "表单填写不完整");
-		}
 
-		if (strcmp($password1, $password2) != 0) {
-			return output(5, "输入的两次密码不同");
-		}
 
-		if (!preg_match('/^.+?@.+?\..+?$/', $email)) {
-			return output(4, "邮箱格式不正确");
-		}
-
-		//防止sql注入
-		$email = mysql_real_escape_string($email);
-		$password = sha1(SALT . $password1);
-		$password = mysql_real_escape_string($password);
-
-		//实现此函数功能前检查此操作是否合法
-		$sql = "select * from `user` where email = '$email'";
-		$result = @ mysql_query($sql, $conn);
-		if ($result && mysql_num_rows($result) > 0) {
-			return output(3, "该邮箱已存在");
-		}
-
-		//实现本函数功能
-		$sql = "insert into `user` (`email`,`lev`) values('$email','1')";
-		$result = @ mysql_query($sql, $conn);
-		if ($result) {
-			$_SESSION['email'] = $email;
-			$_SESSION['lev'] = 0;
-			return output(0, "注册成功");
-		} else {
-			return output(2, "数据库操作失败，请联系管理员");
-		}
-
-	} else {
-		return output(6, "表单填写不完整");
-	}
-}
-
-function login() {
-	global $conn;
-	if (isset ($_POST['email']) && isset ($_POST['password'])) {
-		//获得表单数据
-		$email = $_POST['email'];
-		$password = $_POST['password'];
-
-		//检查表单数据是否合法
-		if (strcmp($email, "") == 0 || strcmp($password, "") == 0) {
-			return output(6, "表单填写不完整");
-		}
-
-		if (!preg_match('/^.+?@.+?\..+?$/', $email)) {
-			return output(4, "邮箱格式不正确");
-		}
-
-		//防止sql注入
-		$email = mysql_real_escape_string($email);
-		$password = sha1(SALT . $password);
-
-		//操作数据库
-		$sql = "select * from user where email = '$email'";
-		$result = @ mysql_query($sql, $conn);
-		if ($result && $row = mysql_fetch_array($result)) {
-			$_SESSION['messagefk_id'] = $row['id'];
-			$_SESSION['messagefk_email'] = $row['email'];
-			$_SESSION['messagefk_lev'] = $row['lev'];
-			return output(0, "登录成功");
-		} else {
-			return output(12, "用户名或密码错误");
-		}
-
-	} else {
-		return output(6, "表单填写不完整");
-	}
-}
 
 function passCheck(){
 	global $conn;
@@ -604,14 +565,18 @@ function passCheck(){
 		if ($problemId == 0) {
 			return output(6, "表单填写不完整");
 		}
-		
-		
-		
 
 		//操作数据库
 		$sql = "select * from problem where id = '$problemId'";
+		$result = mysql_query($sql, $conn);
+		if(!$row = mysql_fetch_array($result)){
+			return output(6, "这个问题已经不存在");
+		}
+		$state = $row["state"];
 		
-		
+		if($state != 1){
+			return output(6, "这个问题已经审核过了");		
+		}
 		
 		$sql = "select * from user where email = '$email'";
 		$result = @ mysql_query($sql, $conn);

@@ -5,9 +5,9 @@ $title = "信息反馈系统提交問題";
 require('inc/header.inc.php');
 require('inc/function.php');
 
-$messagefk_id    = $_SESSION['messagefk_id'];
-$messagefk_email = $_SESSION['messagefk_email'];
-$messagefk_lev   = $_SESSION['messagefk_lev'];
+$messagefkId    = $_SESSION['messagefkId'];
+$messagefkEmail = $_SESSION['messagefkEmail'];
+$messagefkLev   = $_SESSION['messagefkLev'];
 
 if(!isset($_GET["id"])){
 	header('Location:index.php');
@@ -134,7 +134,7 @@ $type  =  2;
 
 <?php 
 	$stateHtml = "";
-	if($state == 1 && $messagefk_lev == 3){
+	if($state == 1 && $messagefkLev == 3){
 		$stateHtml = "						
 			<button class='btn btn-info' onclick=\"clickPassCheck($problemId)\">审核通过</button>
 			<button class='btn btn-danger' onclick=\"clickNotPassCheck($problemId)\">审核不通过</button>
@@ -295,6 +295,7 @@ $type  =  2;
 
 		</div>
 	</div>
+</div>
 	<script src="js/problem.js<?php echo "?t=".time ();?>"></script>
 	<script>
 $(document).ready(function(){

@@ -21,6 +21,7 @@ require_once("init.php");
 require_once("JSON.php");
 $json = new Services_JSON();
 require_once("msg.php");
+require_once("function.php");
 require_once("manger.fun.php");
 
 
@@ -36,7 +37,7 @@ if((!$conn || !$result) && $ret){
 	$code = $_GET["state"];
 	if($code != 1 && $code != 2){
 		// check whether have permission 
-		if(!isset($_SESSION["messagefk_lev"]) || $_SESSION["messagefk_lev"]=="0"){
+		if(!isset($_SESSION["messagefkLev"]) || $_SESSION["messagefkLev"]=="0"){
 			$ret = output(9,"请先登录在操作");
 		}
 	}

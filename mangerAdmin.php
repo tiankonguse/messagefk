@@ -4,10 +4,11 @@ require_once("inc/init.php");
 $title = "信息反馈系统管理页面";
 include_once('inc/header.inc.php');
 
-$messagefk_id    = $_SESSION['messagefk_id'];
-$messagefk_email = $_SESSION['messagefk_email'];
-$messagefk_lev   = $_SESSION['messagefk_lev'];
-if(strcmp($messagefk_lev, "3") != 0){
+$messagefkId    = $_SESSION['messagefkId'];
+$messagefkEmail = $_SESSION['messagefkEmail'];
+$messagefkLev   = $_SESSION['messagefkLev'];
+
+if(strcmp($messagefkLev, "3") != 0){
 	header('Location:login.php');
 }
 
@@ -61,6 +62,11 @@ $type  =  6;
 							<i class="icon-chevron-right"></i> 已完成的问题
 						</a>
 					</li>
+					<li  class="manger_admin_nav7">
+						<a href="javascript:void(0);" onclick="getHtml('nav_admin',7);">
+							<i class="icon-chevron-right"></i> 审核未通过的问题
+						</a>
+					</li>
 				</ul>
 			</div>
 			<div class="span7 mini-layout">
@@ -68,6 +74,7 @@ $type  =  6;
 			</div>
 		</div>
 	</div>
+</div>
 <script src="js/mangerAdmin.js"></script>
 <script>
 

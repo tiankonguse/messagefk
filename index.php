@@ -5,11 +5,11 @@ require_once('inc/function.php');
 $title = "信息反馈系统";
 require_once('inc/header.inc.php');
 
-$messagefk_id    = $_SESSION['messagefk_id'];
-$messagefk_email = $_SESSION['messagefk_email'];
-$messagefk_lev   = $_SESSION['messagefk_lev'];
-if(strcmp($messagefk_lev, "") == 0){
-	$messagefk_lev = 0;
+$messagefkId    = $_SESSION['messagefkId'];
+$messagefkEmail = $_SESSION['messagefkEmail'];
+$messagefkLev   = $_SESSION['messagefkLev'];
+if(strcmp($messagefkLev, "") == 0){
+	$messagefkLev = 0;
 }
 
 $name = $_GET["name"];
@@ -30,7 +30,7 @@ $type  =  0;
 		<div class="row">
 			<div class="span2 bs-docs-sidebar">
 				<ul class="nav nav-list bs-docs-sidenav">
-					<li class="manger_nav1 active">
+					<li class="index_nav1 active">
 						<a href="javascript:void(0);" onclick="getHtml('nav_index',1);">
 							<i class="icon-chevron-right"></i> 全部
 						</a>
@@ -83,7 +83,7 @@ function ajax_fun(name,state){
 function getHtml(name,state){
 	if(name == 'nav_index'){
 		remove_active();
-		$(".nav_index"+state).addClass("active");
+		$(".index_nav"+state).addClass("active");
 		ajax_fun(name,state);
 	}
 }

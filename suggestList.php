@@ -5,10 +5,10 @@ $title = "我的反馈问题列表";
 include_once('inc/function.php');
 include_once('inc/header.inc.php');
 
-$messagefk_id    = $_SESSION['messagefk_id'];
-$messagefk_email = $_SESSION['messagefk_email'];
-$messagefk_lev   = $_SESSION['messagefk_lev'];
-if(strcmp($messagefk_lev, "") == 0){
+$messagefkId    = $_SESSION['messagefkId'];
+$messagefkEmail = $_SESSION['messagefkEmail'];
+$messagefkLev   = $_SESSION['messagefkLev'];
+if(strcmp($messagefkLev, "") == 0){
 	header('Location:login.php?messageCode=1');
 }
 
@@ -75,6 +75,7 @@ $type  =  2;
 			</div>
 		</div>
 	</div>
+</div>
 <script>
 
 

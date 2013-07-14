@@ -19,13 +19,16 @@ if((!$conn || !$result) && $ret){
 
 	if(strcmp($name,"nav_admin") == 0){
 		switch($code){
-			case 1 :echo $json->encode(get_manger_depart());break;
-			case 2 :echo $json->encode(get_admin_wait_check_problem());break;
-			case 3 :echo $json->encode(get_admin_wait_accept_problem());break;
-			case 4 :echo $json->encode(get_admin_now_fixxing_problem());break;
+			case 1 :echo $json->encode(getMangerDepart());break;
+			case 2 :echo $json->encode(getAdminWaitCheckProblem());break;
+			case 3 :echo $json->encode(getAdminWaitAcceptProblem());break;
+			case 4 :echo $json->encode(getAdminNowFixxingProblem());break;
+			case 5 :echo $json->encode(getAdminWaitEvaluateProblem());break;
+			case 6 :echo $json->encode(getAdminFinishProblem());break;
+			case 7 :echo $json->encode(getAdminNotPassProblem());break;
 		}
 	}else if(strcmp($name,"depart") == 0){
-		echo $json->encode(get_manger_block($code));
+		echo $json->encode(getMangerBlock($code));
 	}else if(strcmp($name,"nav_user") == 0){
 		switch($code){
 			case 1 :echo $json->encode(getUserAllProblem());break;
