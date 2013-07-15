@@ -1,13 +1,13 @@
 <?php
 
-function sendMSGToUser($proId, $userId){
+function sendMSGToUser($proId, $userId, $msgText){
 	
 }
-function sendMSGToAdmin($proId){
+function sendMSGToAdmin($proId, $msgText){
 	
 }
 
-function sendMSGToCenter($proId, $centerId){
+function sendMSGToCenter($proId, $centerId, $msgText){
 	
 }
 

@@ -15,6 +15,7 @@
 	update_depart_admin => 11
 	delete_depart_admin => 12
 	passCheck       => 13
+	NotPassCheck => 14
 */
 session_start();
 require_once("init.php");
@@ -37,7 +38,7 @@ if((!$conn || !$result) && $ret){
 	$code = $_GET["state"];
 	if($code != 1 && $code != 2){
 		// check whether have permission 
-		if(!isset($_SESSION["messagefkLev"]) || $_SESSION["messagefkLev"]=="0"){
+		if(!isset($_SESSION["messagefkLev"]) || $_SESSION["messagefkLev"] == 0){
 			$ret = output(9,"请先登录在操作");
 		}
 	}
@@ -61,6 +62,7 @@ if((!$conn || !$result) && $ret){
 			case 11:echo $json->encode(updateDepartAdmin());break;
 			case 12:echo $json->encode(deleteDepartAdmin());break;
 			case 13:echo $json->encode(passCheck());break;
+			case 14:echo $json->encode(notPassCheck());break;
 		}
 	}
 }

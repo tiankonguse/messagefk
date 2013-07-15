@@ -120,6 +120,8 @@ function getStateTime($problemId, $state){
 	}
 }
 
+
+
 function getUserEmail($userId){
 	global $conn;
 	$userId = intval($userId);
@@ -136,15 +138,15 @@ function getUserEmail($userId){
 function checkLev($lev){
 	$messagefkLev   = intval($_SESSION['messagefkLev']);
 	$lev = intval($lev);
-	return strcmp($lev,$messagefkLev);
+	return $lev == $messagefkLev;
 }
 
-$stateArray = Array("审核未通过","等待审核","等待受理","维修中","问题解决，等待评价","问题完成");
+$stateArray = Array("审核未通过","等待审核","等待受理","维修中“，等待评价","问题完成");
 
 function getStateHtml($state){
 	global  $stateArray;
 	$state = intval($state);
-	return $stateArray[$state%7];
+	return $stateArray[$state % PRO_NOT_PASS];
 }
 
 
@@ -221,4 +223,17 @@ function isExistMapDepartBlock($departId, $blockId){
 	$result = mysql_query($sql, $conn);
 	$row = mysql_fetch_array($result);
 	return $row["num"];
+}
+
+
+function getCenterId($departId){
+	global $conn;
+	$departId = intval($departId);
+	$sql = "select * from `depart` where `id` = '$departId'";
+	$result = mysql_query($sql ,$conn);
+	if($row = mysql_fetch_array($result)){
+		return $row['center'];
+	}else{
+		return "0";
+	}
 }

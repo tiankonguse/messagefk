@@ -4,7 +4,7 @@ function getMangerDepart(){
 
 	global $conn;
 
-	if(checkLev(3) != 0){
+	if(!checkLev(3) ){
 		return output(0, "你的权限不足");
 	}
 
@@ -70,7 +70,7 @@ function getMangerDepart(){
 function getMangerBlock($code){
 	global $conn;
 
-	if(checkLev(3) != 0){
+	if(!checkLev(3) ){
 		return output(0, "你的权限不足");
 	}
 
@@ -118,7 +118,7 @@ function getMangerBlock($code){
 function getAdminStateProblem($state){
 	global $conn;
 	
-	if(checkLev(3) != 0){
+	if(!checkLev(3) ){
 		return output(0, "你的权限不足");
 	}
 
@@ -191,7 +191,7 @@ function getAdminNotPassProblem(){
 function getUserAllProblem(){
 	global $conn;
 
-	if(checkLev(0) == 0){
+	if(checkLev(0) ){
 		return output(0, "请先登录再操作");
 	}
 
@@ -242,7 +242,7 @@ function getUserAllProblem(){
 
 
 function getUserStateProblem($state){
-	if(checkLev(0) == 0){
+	if(checkLev(0) ){
 		return output(0, "请先登录再操作");
 	}
 	global $conn;

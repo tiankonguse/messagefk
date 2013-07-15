@@ -9,6 +9,20 @@ define('DB_USER','tiankong_mfk');
 define('DB_PASS','messagefk');
 define('SALT','messagefk');
 
+define('PRO_ASK','1');
+define('PRO_PASS','2');
+define('PRO_ACCEPT','3');
+define('PRO_FINISH','4');
+define('PRO_OVER','5');
+define('PRO_NOT_PASS','6');
+
+
+define('LEV_ADMIN','3');
+define('LEV_FIX','2');
+define('LEV_USER','1');
+
+define('OUTPUT_SUCCESS','0');
+define('OUTPUT_ERROR','1');
 
 $conn = false;
 $result = false;

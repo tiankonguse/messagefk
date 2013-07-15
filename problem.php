@@ -38,7 +38,6 @@ $title = $row['title'];
 $content = $row['content'];
 
 
-
 $departId = $row['depart_id'];
 $departName = getDepartName($departId);
 $departMangerId = getDepartMangerId($departId);
@@ -50,7 +49,18 @@ $blockName = getBlocktName($blockId);
 $phone = $row['phone'];
 
 $state = $row['state'];
+
+$suggestTime = "";
+$passTime = "";
+
+
 $suggestTime = getStateTime($problemId,1);
+
+if($state != PRO_NOT_PASS && $state >= PRO_PASS){
+	$passTime = getStateTime($problemId,2);
+	$passTime = date("Y-m-d h:i:s",$passTime);
+}
+
 
 $formId = date("Ymdhis",$suggestTime) . $problemId;
 
@@ -58,7 +68,6 @@ $suggestTime = date("Y-m-d h:i:s",$suggestTime);
 
 $stateHtml = getStateHtml($state);
 
-$notPass = 6;
 
 $type  =  2;
 ?>
@@ -78,33 +87,33 @@ $type  =  2;
 					</div>
 				</li>
 				<li>
-					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
+					<div class="<?php if($state != PRO_NOT_PASS && $state >=2){echo "step-down";}?>">
 						<div class="step-name">审核通过</div>
 						<div class="step-no"></div>
 					</div>
 
 				</li>
 				<li>
-					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
-						<div class="step-name">通过受理</div>
+					<div class="<?php if($state != PRO_NOT_PASS && $state >=3){echo "step-down";}?>">
+						<div class="step-name">受理通过</div>
 						<div class="step-no"></div>
 					</div>
 
 				</li>
 				<li>
-					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
+					<div class="<?php if($state != PRO_NOT_PASS && $state >=3){echo "step-down";}?>">
 						<div class="step-name">正在維修中</div>
 						<div class="step-no"></div>
 					</div>
 				</li>
 				<li>
-					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
+					<div class="<?php if($state != PRO_NOT_PASS && $state >=4){echo "step-down";}?>">
 						<div class="step-name">維修完成</div>
 						<div class="step-no"></div>
 					</div>
 				</li>
 				<li class="step-last">
-					<div class="<?php if($state != $notPass && $state >=2){echo "step-down";}?>">
+					<div class="<?php if($state != PRO_NOT_PASS && $state >=5){echo "step-down";}?>">
 						<div class="step-name">评价完成</div>
 						<div class="step-no"></div>
 					</div>
@@ -125,7 +134,7 @@ $type  =  2;
 					<tr>
 						<td>申报人：</td> <td><?php echo $userName;?></td>
 						<td>申报电话：</td> <td><?php echo $phone;?></td>
-						<td>审核时间：</td> <td></td>
+						<td>审核时间：</td> <td><?php echo $passTime;?></td>
 					</tr>
 					<tr>
 						<td>服务类型：</td> <td><?php echo $departName;?></td>
@@ -134,7 +143,7 @@ $type  =  2;
 
 <?php 
 	$stateHtml = "";
-	if($state == 1 && $messagefkLev == 3){
+	if($state == PRO_ASK && $messagefkLev == LEV_ADMIN){
 		$stateHtml = "						
 			<button class='btn btn-info' onclick=\"clickPassCheck($problemId)\">审核通过</button>
 			<button class='btn btn-danger' onclick=\"clickNotPassCheck($problemId)\">审核不通过</button>
@@ -195,7 +204,7 @@ $type  =  2;
 					<tr id="hf_cotent">
 						<td>服务打分:</td>
 						<td class="bxtitle1">
-<?php if($state == 4){?>
+<?php if($state == PRO_FINISH){?>
 							<div style="float: left;  id="hf_star">
 								<div id="grade-box" class="grade-box">
 									<ul>
