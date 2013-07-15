@@ -8,7 +8,7 @@ $messagefkId    = $_SESSION['messagefkId'];
 $messagefkEmail = $_SESSION['messagefkEmail'];
 $messagefkLev   = $_SESSION['messagefkLev'];
 
-if(strcmp($messagefkLev, "3") != 0){
+if(strcmp($messagefkLev, LEV_ADMIN) != 0){
 	header('Location:login.php');
 }
 

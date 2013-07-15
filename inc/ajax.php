@@ -47,6 +47,12 @@ if((!$conn || !$result) && $ret){
 			case 4 :echo $json->encode(getIndexWaitEvaluateProblem());break;
 			case 5 :echo $json->encode(getIndexFinishProblem());break;
 		}
+	}else if(strcmp($name, "nav_fix") == 0){
+		switch($code){
+			case 1 :echo $json->encode(getFixAllProblem());break;
+			case 2 :echo $json->encode(getFixWaitAcceptProblem());break;
+			case 3 :echo $json->encode(getFixNowFixingProblem());break;
+		}
 	}
 
 
