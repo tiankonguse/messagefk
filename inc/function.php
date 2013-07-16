@@ -1,5 +1,10 @@
 <?php
 
+function xss($srt){
+	//return htmlentities($srt,ENT_NOQUOTES,UTF8); 
+	return htmlspecialchars($srt);
+}
+
 function isEmail($email){
 	return preg_match('/^[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+.)+[a-z]{2,3}$/', $email);
 }
@@ -141,7 +146,7 @@ function checkLev($lev){
 	return $lev == $messagefkLev;
 }
 
-$stateArray = Array("审核未通过","等待审核","等待受理","维修中“，等待评价","问题完成");
+$stateArray = Array("审核未通过","等待审核","等待受理","维修中","等待评价","问题完成");
 
 function getStateHtml($state){
 	global  $stateArray;

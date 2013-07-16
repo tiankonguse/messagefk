@@ -31,7 +31,7 @@ $type  =  6;
 				<ul class="nav nav-list bs-docs-sidenav">
 					<li class="manger_fix_nav1 active">
 						<a href="javascript:void(0);" onclick="getHtml('nav_fix',1);">
-							<i class="icon-chevron-right"></i> 管理分类
+							<i class="icon-chevron-right"></i> 全部问题
 						</a>
 					</li>
 					<li  class="manger_fix_nav2">

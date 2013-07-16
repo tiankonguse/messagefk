@@ -20,6 +20,7 @@ define('PRO_NOT_PASS','6');
 define('LEV_ADMIN','3');
 define('LEV_FIX','2');
 define('LEV_USER','1');
+define('LEV_VISITOR','0');
 
 define('OUTPUT_SUCCESS','0');
 define('OUTPUT_ERROR','1');

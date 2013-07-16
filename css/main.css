@@ -151,7 +151,6 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 }
 
 /* flowstep begin */
-
 .flowstep .step-no {
 	background: url(../img/T1ze0ZXA0aXXcVlxZa-734-340.png) no-repeat 50%
 		-102px
@@ -208,8 +207,6 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 	background-position: 50% -170px;
 }
 
-
-
 .flowstep-4 {
 	width: 1000px;
 	margin-left: 10px;
@@ -222,8 +219,62 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 /* flowstep end */
 
 /* problem   */
-
 .problem-table-head {
 	font-weight: bold;
 	color: #2b7eca;
 }
+
+.chargeContent {
+	width: 450px;
+	height: 70px;
+}
+
+.red {
+	color: red;
+}
+
+.grade-box {
+	background: url("../img/video-grade-bg.gif") repeat-x scroll 0 -40px
+		transparent;
+	display: block;
+	float: left;
+	height: 20px;
+	overflow: hidden;
+	position: relative;
+	width: 130px;
+}
+
+.grade-box ul {
+	display: block;
+	height: 20px;
+	left: 0;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	width: 130px;
+	z-index: 3;
+}
+
+.grade-box li {
+	cursor: pointer;
+	display: block;
+	float: left;
+	height: 20px;
+	width: 26px;
+	z-index: 1;
+	list-style: none;
+	overflow: hidden;
+}
+
+.grade-box .start-grade {
+	background: url("../img/video-grade-bg.gif") repeat-x scroll 0 0
+		transparent;
+	display: block;
+	height: 20px;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 0;
+	z-index: 2;
+}
+

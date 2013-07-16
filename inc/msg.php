@@ -7,7 +7,7 @@ function sendMSGToAdmin($proId, $msgText){
 	
 }
 
-function sendMSGToCenter($proId, $centerId, $msgText){
+function sendMSGToFix($proId, $FixId, $msgText){
 	
 }
 

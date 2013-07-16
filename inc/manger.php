@@ -16,6 +16,9 @@
 	delete_depart_admin => 12
 	passCheck       => 13
 	NotPassCheck => 14
+	accept  => 15
+	finish => 16
+	over => 17
 */
 session_start();
 require_once("init.php");
@@ -58,11 +61,14 @@ if((!$conn || !$result) && $ret){
 			case 7 :echo $json->encode(updateBlock());break;
 			case 8 :echo $json->encode(deleteBlock());break;
 			case 9 :echo $json->encode(getDepartBlock());break;
-			case 10:echo $json->encode(addProblrm());break;
+			case 10:echo $json->encode(addProblem());break;
 			case 11:echo $json->encode(updateDepartAdmin());break;
 			case 12:echo $json->encode(deleteDepartAdmin());break;
 			case 13:echo $json->encode(passCheck());break;
 			case 14:echo $json->encode(notPassCheck());break;
+			case 15:echo $json->encode(accept());break;
+			case 16:echo $json->encode(finish());break;
+			case 17:echo $json->encode(over());break;
 		}
 	}
 }
