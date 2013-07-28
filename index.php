@@ -102,6 +102,7 @@ $(document).ready(function(){
 	getHtml(<?php echo "\"$name\",$state";?>);
 });
 </script>
+
 <?php include_once('inc/footer.inc.php'); ?>
 <?php include_once('inc/end.php'); ?>
 
