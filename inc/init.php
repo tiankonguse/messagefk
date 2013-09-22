@@ -44,7 +44,6 @@ function connectDB(){
 	//设置严格模式
 	// $result = @mysql_query("set sql_mode='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
 	// if(!$result)return (output(2,"设置严格模式失败,请联系管理员."));
-
 	
 	//设置数据库
 	$result = @mysql_select_db(DB_NAME);
