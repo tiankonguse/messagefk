@@ -4,16 +4,17 @@ require_once("inc/init.php");
 $title = "信息反馈系统管理页面";
 include_once('inc/header.inc.php');
 
-$messagefkId    = $_SESSION['messagefkId'];
-$messagefkEmail = $_SESSION['messagefkEmail'];
-$messagefkLev   = $_SESSION['messagefkLev'];
+$messagefkId    = isset($_SESSION['messagefkId']) ? $_SESSION['messagefkId'] : "";
+$messagefkEmail    = isset($_SESSION['messagefkEmail']) ? $_SESSION['messagefkEmail'] : "";
+$messagefkLev    = isset($_SESSION['messagefkLev']) ? $_SESSION['messagefkLev'] : "";
 
 if(strcmp($messagefkLev, LEV_ADMIN) != 0){
 	header('Location:login.php');
 }
 
-$name = $_GET["name"];
-$state = $_GET["state"];
+$name    = isset($_GET['name']) ? $_GET['name'] : "";
+$state    = isset($_GET['state']) ? $_GET['state'] : "";
+
 
 if(strcmp($name,"") == 0){
 	$name = "nav_admin";
@@ -62,11 +63,16 @@ $type  =  6;
 							<i class="icon-chevron-right"></i> 已完成的问题
 						</a>
 					</li>
-					<li  class="manger_admin_nav7">
-						<a href="javascript:void(0);" onclick="getHtml('nav_admin',7);">
-							<i class="icon-chevron-right"></i> 审核未通过的问题
-						</a>
-					</li>
+                    <li  class="manger_admin_nav7">
+                        <a href="javascript:void(0);" onclick="getHtml('nav_admin',7);">
+                            <i class="icon-chevron-right"></i> 审核未通过的问题
+                        </a>
+                    </li>
+                    <li  class="manger_admin_nav8">
+                        <a href="javascript:void(0);" onclick="getHtml('nav_admin',8);">
+                            <i class="icon-chevron-right"></i> 统计数据
+                        </a>
+                    </li>
 				</ul>
 			</div>
 			<div class="span7 mini-layout">

@@ -4,16 +4,16 @@ require_once("inc/init.php");
 $title = "信息反馈系统管理页面";
 include_once('inc/header.inc.php');
 
-$messagefkId    = $_SESSION['messagefkId'];
-$messagefkEmail = $_SESSION['messagefkEmail'];
-$messagefkLev   = $_SESSION['messagefkLev'];
+$messagefkId    = isset($_SESSION['messagefkId']) ? $_SESSION['messagefkId'] : "";
+$messagefkEmail    = isset($_SESSION['messagefkEmail']) ? $_SESSION['messagefkEmail'] : "";
+$messagefkLev    = isset($_SESSION['messagefkLev']) ? $_SESSION['messagefkLev'] : "";
 
 if(strcmp($messagefkLev, LEV_FIX) != 0){
 	header('Location:login.php');
 }
 
-$name = $_GET["name"];
-$state = $_GET["state"];
+$name    = isset($_GET['name']) ? $_GET['name'] : "";
+$state    = isset($_GET['state']) ? $_GET['state'] : "";
 
 if(strcmp($name,"") == 0){
 	$name = "nav_fix";

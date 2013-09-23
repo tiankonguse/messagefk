@@ -5,15 +5,18 @@ require_once('inc/function.php');
 $title = "信息反馈系统";
 require_once('inc/header.inc.php');
 
-$messagefkId    = $_SESSION['messagefkId'];
-$messagefkEmail = $_SESSION['messagefkEmail'];
-$messagefkLev   = $_SESSION['messagefkLev'];
+$messagefkId    = isset($_SESSION['messagefkId']) ? $_SESSION['messagefkId'] : "";
+$messagefkEmail    = isset($_SESSION['messagefkEmail']) ? $_SESSION['messagefkEmail'] : "";
+$messagefkLev    = isset($_SESSION['messagefkLev']) ? $_SESSION['messagefkLev'] : "";
+
+
 if(strcmp($messagefkLev, "") == 0){
 	$messagefkLev = 0;
 }
 
-$name = $_GET["name"];
-$state = $_GET["state"];
+$name    = isset($_GET['name']) ? $_GET['name'] : "";
+$state    = isset($_GET['state']) ? $_GET['state'] : "";
+
 
 if(strcmp($name,"") == 0){
 	$name = "nav_index";
@@ -62,18 +65,18 @@ $type  =  0;
 			</div>
 		</div>
 	</div>
-
+</div>
 <script>
 
 function remove_active(){
 	$(".content .row ul.nav li.active").removeClass("active");
 }
+
 function setUrl(name,state){
 	var _state = {title:'',url:window.location.href.split("?")[0]};
 
     history.pushState(_state,'','?name='+name+'&state='+state);	
 }
-
 
 function ajax_fun(name,state){
 

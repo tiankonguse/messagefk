@@ -4,9 +4,11 @@ require_once("inc/init.php");
 $title = "信息反馈系统登陆页面";
 include_once('inc/header.inc.php');
 
-$messagefkId    = $_SESSION['messagefkId'];
-$messagefkEmail = $_SESSION['messagefkEmail'];
-$messagefkLev   = $_SESSION['messagefkLev'];
+$messagefkId    = isset($_SESSION['messagefkId']) ? $_SESSION['messagefkId'] : "";
+$messagefkEmail    = isset($_SESSION['messagefkEmail']) ? $_SESSION['messagefkEmail'] : "";
+$messagefkLev    = isset($_SESSION['messagefkLev']) ? $_SESSION['messagefkLev'] : "";
+
+
 if(strcmp($messagefkLev, "") == 0){
 	$messagefkLev = 0;
 }else{
@@ -17,8 +19,8 @@ if(strcmp($messagefkLev, "") == 0){
 $type  =  4;
 ?>
 <div class="wrap">
-<?php include_once('inc/top.inc.php'); ?>
-<?php include_once('inc/nav.inc.php'); ?>
+	<?php include_once('inc/top.inc.php'); ?>
+	<?php include_once('inc/nav.inc.php'); ?>
 	<div class="content">
 		<div class="loginbox">
 		    <div class="login-hint-line">
@@ -94,7 +96,7 @@ $type  =  4;
   		</div>
 		  <div class="modal-footer">
 		    <button class="btn" data-dismiss="modal" aria-hidden="true" >取消</button>
-		    <button class="btn btn-primary" onclick="addNewUser();return false;">确认</button>
+		    <button class="btn btn-primary" onclick="addNewUser();">确认</button>
 		  </div>
   </div>
 </div>
@@ -111,7 +113,7 @@ $(document).ready(function(){
 
 
 	<?php 
-		if(strcmp($_GET["messageCode"],"1") == 0){
+		if(isset($_GET["messageCode"]) && strcmp($_GET["messageCode"],"1") == 0){
 			echo "showMessage('请先登录在操作！');";
 		}
 	?>

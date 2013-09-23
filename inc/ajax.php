@@ -37,7 +37,6 @@ if((!$conn || !$result) && $ret){
 			case 4 :echo $json->encode(getUserNowFixingProblem());break;
 			case 5 :echo $json->encode(getUserWaitEvaluateProblem());break;
 			case 6 :echo $json->encode(getUserFinishProblem());break;
-			case 7 :echo $json->encode(getUserNotPassProblem());break;
 		}
 	}else if(strcmp($name, "nav_index")== 0){
 		switch($code){

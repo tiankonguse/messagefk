@@ -5,15 +5,19 @@ $title = "我的反馈问题列表";
 include_once('inc/function.php');
 include_once('inc/header.inc.php');
 
-$messagefkId    = $_SESSION['messagefkId'];
-$messagefkEmail = $_SESSION['messagefkEmail'];
-$messagefkLev   = $_SESSION['messagefkLev'];
+$messagefkId    = isset($_SESSION['messagefkId']) ? $_SESSION['messagefkId'] : "";
+$messagefkEmail    = isset($_SESSION['messagefkEmail']) ? $_SESSION['messagefkEmail'] : "";
+$messagefkLev    = isset($_SESSION['messagefkLev']) ? $_SESSION['messagefkLev'] : "";
+
+
 if(strcmp($messagefkLev, "") == 0){
 	header('Location:login.php?messageCode=1');
 }
 
-$name = $_GET["name"];
-$state = $_GET["state"];
+
+$name    = isset($_GET['name']) ? $_GET['name'] : "";
+$state    = isset($_GET['state']) ? $_GET['state'] : "";
+
 
 if(strcmp($name,"") == 0){
 	$name = "nav_user";
@@ -61,11 +65,6 @@ $type  =  2;
 					<li  class="user_nav6">
 						<a href="javascript:void(0);" onclick="getHtml('nav_user',6);">
 							<i class="icon-chevron-right"></i> 完成的
-						</a>
-					</li>
-					<li  class="user_nav7">
-						<a href="javascript:void(0);" onclick="getHtml('nav_user',7);">
-							<i class="icon-chevron-right"></i> 未通过审核
 						</a>
 					</li>
 				</ul>
