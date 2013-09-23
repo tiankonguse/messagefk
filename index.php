@@ -6,9 +6,11 @@ $title = "信息反馈系统";
 require_once('inc/header.inc.php');
 
 $messagefkId    = isset($_SESSION['messagefkId']) ? $_SESSION['messagefkId'] : "";
+$_SESSION['messagefkId'] = $messagefkId;
 $messagefkEmail    = isset($_SESSION['messagefkEmail']) ? $_SESSION['messagefkEmail'] : "";
+$_SESSION['messagefkEmail'] = $messagefkEmail;
 $messagefkLev    = isset($_SESSION['messagefkLev']) ? $_SESSION['messagefkLev'] : "";
-
+$_SESSION['messagefkLev'] = $messagefkLev;
 
 if(strcmp($messagefkLev, "") == 0){
 	$messagefkLev = 0;
@@ -74,7 +76,6 @@ function remove_active(){
 
 function setUrl(name,state){
 	var _state = {title:'',url:window.location.href.split("?")[0]};
-
     history.pushState(_state,'','?name='+name+'&state='+state);	
 }
 

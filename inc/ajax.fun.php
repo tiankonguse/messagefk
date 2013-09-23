@@ -115,9 +115,19 @@ function getMangerBlock($code){
 }
 
 
+$stateName = array(
+    1=>"等待审核",
+    2=>"等待受理",
+    3=>"等待维修",
+    4=>"等待评价",
+    5=>"已完成",
+    6=>"未通过审核"
+);
+
 function getAdminStateProblem($state){
-	global $conn;
-	
+    global $conn;
+   global $stateName;
+    
 	if(!checkLev(3) ){
 		return output(0, "你的权限不足");
 	}
@@ -138,13 +148,20 @@ function getAdminStateProblem($state){
 	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
+	
 		$pro_id = $row['id'];
 		$pro_title = $row['title'];
 		$depart_id = $row['depart_id'];
 		$depart_name = getDepartName($depart_id);
-
+		
 		$asktime = getStateTime($pro_id,"1");
-		$asktime = date("Y-m-d h:i:s",$asktime);
+		if($asktime == ""){
+		  $asktime = "未知";
+		}else{
+		  $asktime = date("Y-m-d h:i:s",$asktime);
+		}
+		$stateHtml = getStateHtml($state);
+		
 
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
@@ -152,7 +169,7 @@ function getAdminStateProblem($state){
 		$tr .= "<td>$depart_name</td>";
 		$tr .= "<td><a href='problem.php?id=$pro_id'>$pro_title</a></td>";
 		$tr .= "<td>$asktime</td>";
-		$tr .= "<td>等到管理员审核</td>";
+		$tr .= "<td>$stateHtml</td>";
 		$tr .= "</tr>";
 		$html .= $tr;
 	}
@@ -163,30 +180,33 @@ function getAdminStateProblem($state){
 	return output(0, $html);
 }
 
+//需要审核的问题
 function getAdminWaitCheckProblem(){
 	return getAdminStateProblem(1);
 }
 
+//需要受理的问题
 function getAdminWaitAcceptProblem(){
 	return getAdminStateProblem(2);
 }
 
-
+//正在维修的问题
 function getAdminNowFixxingProblem(){
 	return getAdminStateProblem(3);
 }
-
+//需要评价的问题
 function getAdminWaitEvaluateProblem(){
 	return getAdminStateProblem(4);
 }
-
+//完成的问题
 function getAdminFinishProblem(){
 	return getAdminStateProblem(5);
 }
-
+//未通过审核的问题
 function getAdminNotPassProblem(){
 	return getAdminStateProblem(6);
 }
+
 
 function getUserAllProblem(){
 	global $conn;
@@ -332,7 +352,6 @@ function getIndexAllProblem(){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-	$userId    = intval($_SESSION['messagefkId']);
 	$sql = "SELECT * FROM `problem` WHERE `state` > '1' and `state` < '6' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
@@ -542,4 +561,12 @@ function getFixNowFixingProblem(){
 	return getFixStateProblem(3);
 }
 
+
+function getAdminStatistics(){
+	$t = time ();
+	$className = "highcharts_t_".$t;
+    $html  = "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+    $html .= "<script>if(everyYearNumberOfRepairs){everyYearNumberOfRepairs(\"$className\");}</script>";
+    return output(0, $html);
+}
 

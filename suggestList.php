@@ -62,11 +62,16 @@ $type  =  2;
 							<i class="icon-chevron-right"></i> 等待评价中
 						</a>
 					</li>
-					<li  class="user_nav6">
-						<a href="javascript:void(0);" onclick="getHtml('nav_user',6);">
-							<i class="icon-chevron-right"></i> 完成的
-						</a>
-					</li>
+                    <li  class="user_nav6">
+                        <a href="javascript:void(0);" onclick="getHtml('nav_user',6);">
+                            <i class="icon-chevron-right"></i> 完成的
+                        </a>
+                    </li>
+                    <li  class="user_nav7">
+                        <a href="javascript:void(0);" onclick="getHtml('nav_user',7);">
+                            <i class="icon-chevron-right"></i> 未通过审核的
+                        </a>
+                    </li>
 				</ul>
 			</div>
 			<div class="span7 mini-layout">
@@ -84,14 +89,11 @@ function remove_active(){
 
 function setUrl(name,state){
 	var _state = {title:'',url:window.location.href.split("?")[0]};
-
     history.pushState(_state,'','?name='+name+'&state='+state);	
 }
 
 function ajax_fun(name,state){
-
 	setUrl(name,state);
-	
 	$.post("inc/ajax.php",{
 		name:name,
 		state:state

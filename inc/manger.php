@@ -1,25 +1,26 @@
 <?php
- /*
-	inc/manger.php?id=
-	定义一个操作
-	register      => 1
-	login         => 2
-	add_depart    => 3
-	update_depart => 4
-	delete_depart => 5
-	add_block     => 6
-	update_block  => 7
-	delete_block  => 8
-	get_depart_block => 9
-	add_question => 10
-	update_depart_admin => 11
-	delete_depart_admin => 12
-	passCheck       => 13
-	NotPassCheck => 14
-	accept  => 15
-	finish => 16
-	over => 17
-*/
+/*
+ inc/manger.php?id=
+ 定义一个操作
+ register      => 1
+ login         => 2
+ add_depart    => 3
+ update_depart => 4
+ delete_depart => 5
+ add_block     => 6
+ update_block  => 7
+ delete_block  => 8
+ get_depart_block => 9
+ add_question => 10
+ update_depart_admin => 11
+ delete_depart_admin => 12
+ passCheck       => 13
+ NotPassCheck => 14
+ accept  => 15
+ finish => 16
+ over => 17
+ everyYearNumberOfRepairs => 18
+ */
 session_start();
 require_once("init.php");
 require_once("JSON.php");
@@ -37,15 +38,15 @@ if((!$conn || !$result) && $ret){
 	$ret = output(14,"非法操作");
 	echo $json->encode($ret);
 }else{
-		
+
 	$code = $_GET["state"];
 	if($code != 1 && $code != 2){
-		// check whether have permission 
+		// check whether have permission
 		if(!isset($_SESSION["messagefkLev"]) || $_SESSION["messagefkLev"] == 0){
 			$ret = output(9,"请先登录在操作");
 		}
 	}
-	
+
 	if($ret){
 		// no permission
 		echo $json->encode($ret);
@@ -69,6 +70,7 @@ if((!$conn || !$result) && $ret){
 			case 15:echo $json->encode(accept());break;
 			case 16:echo $json->encode(finish());break;
 			case 17:echo $json->encode(over());break;
+			case 18:echo $json->encode(everyYearNumberOfRepairs());break;
 		}
 	}
 }

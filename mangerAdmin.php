@@ -82,6 +82,8 @@ $type  =  6;
 	</div>
 </div>
 <script src="js/mangerAdmin.js"></script>
+<script src="Highcharts/js/highcharts.js"></script>
+<script src="Highcharts/js/modules/exporting.js"></script>
 <script>
 
 function remove_active(){

@@ -117,6 +117,7 @@ function getStateTime($problemId, $state){
 	$state = intval($state);
 
 	$sql = "select * from `problem_time` where `pro_id` = '$problemId' and `state` = '$state'";
+
 	$result = mysql_query($sql ,$conn);
 	if($row = mysql_fetch_array($result)){
 		return $row['time'];

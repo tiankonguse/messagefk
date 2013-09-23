@@ -26,6 +26,7 @@ if((!$conn || !$result) && $ret){
 			case 5 :echo $json->encode(getAdminWaitEvaluateProblem());break;
 			case 6 :echo $json->encode(getAdminFinishProblem());break;
 			case 7 :echo $json->encode(getAdminNotPassProblem());break;
+			case 8 :echo $json->encode(getAdminStatistics());break;
 		}
 	}else if(strcmp($name,"depart") == 0){
 		echo $json->encode(getMangerBlock($code));
@@ -37,6 +38,7 @@ if((!$conn || !$result) && $ret){
 			case 4 :echo $json->encode(getUserNowFixingProblem());break;
 			case 5 :echo $json->encode(getUserWaitEvaluateProblem());break;
 			case 6 :echo $json->encode(getUserFinishProblem());break;
+			case 7 :echo $json->encode(getUserNotPassProblem());break;
 		}
 	}else if(strcmp($name, "nav_index")== 0){
 		switch($code){

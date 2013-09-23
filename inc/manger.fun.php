@@ -83,11 +83,11 @@ function login() {
 
 function addDepart() {
 	global $conn;
-	
+
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
 	}
-	
+
 	//检查变量是否存在
 	if (isset ($_POST['name'])) {
 		//获得变量的数据
@@ -123,11 +123,11 @@ function addDepart() {
 
 function updateDepart() {
 	global $conn;
-	
+
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	//检查变量是否存在
 	if (isset ($_POST['name']) && isset ($_POST['id'])) {
 		//获得变量的数据
@@ -158,11 +158,11 @@ function updateDepart() {
 
 function deleteDepart() {
 	global $conn;
-	
+
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	//检查变量是否存在
 	if (isset ($_POST['id'])) {
 		//获得变量的数据
@@ -179,11 +179,11 @@ function deleteDepart() {
 		if(!_deleteDepartAdmin($id)){
 			return output(OUTPUT_ERROR, "管理员删除失败");
 		}
-		
+
 		if(!deleteMapDepart($id)){
 			return output(OUTPUT_ERROR, "删除小分类时出错");
 		}
-		
+
 
 		//实现本函数功能
 		$sql = "DELETE FROM `depart` WHERE `id` = '$id'";
@@ -203,8 +203,8 @@ function addBlock() {
 
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	//检查变量是否存在
 	if (isset ($_POST['name']) || isset ($_POST['name'])) {
 		//获得变量的数据
@@ -256,11 +256,11 @@ function addBlock() {
 
 function updateBlock() {
 	global $conn;
-	
+
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	//检查变量是否存在
 	if (isset ($_POST['name']) && isset ($_POST['id'])) {
 		//获得变量的数据
@@ -291,11 +291,11 @@ function updateBlock() {
 
 function deleteBlock() {
 	global $conn;
-	
+
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	//检查变量是否存在
 	if (isset ($_POST['id'])) {
 		//获得变量的数据
@@ -330,7 +330,7 @@ function getDepartBlock() {
 	if(checkLev(LEV_VISITOR)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
 	}
-	
+
 	$sql = "select * from depart where center != ''";
 	$result_depart = mysql_query($sql, $conn);
 
@@ -362,14 +362,14 @@ function getDepartBlock() {
 function addProblem() {
 	global $conn;
 
-	/*			
+	/*
 	 title:$title,
 	 depart_id:$depart_id,
 	 block_id:$block_id,
 	 name:$name,
 	 phone:$phone,
 	 content:$content
-	*/
+	 */
 
 	// check whether the post is legitimate
 	if (isset ($_POST['title']) && isset ($_POST['depart_id']) && isset ($_POST['block_id']) && isset ($_POST['name']) && isset ($_POST['email']) && isset ($_POST['phone']) && isset ($_POST['content'])) {
@@ -394,13 +394,13 @@ function addProblem() {
 		if (!preg_match('/^.+?@.+?\..+?$/', $email)) {
 			return output(OUTPUT_ERROR, "邮箱格式不正确");
 		}
-		
-		
+
+
 		//prevent xss
 		$title = xss($title);
 		$name = xss($name);
 		$content = xss($content);
-		
+
 		//Prevent sql injection
 		$title = mysql_real_escape_string($title);
 		$depart_id = mysql_real_escape_string($depart_id);
@@ -411,18 +411,18 @@ function addProblem() {
 		$email = mysql_real_escape_string($email);
 		$asktime = time();
 		$state = PRO_ASK;
-		
+
 		$sql = "select * from depart where id = '$depart_id'";
 		$result_depart = mysql_query($sql, $conn);
 		if(!$row = mysql_fetch_array($result_depart)){
 			return output(OUTPUT_ERROR, "你提交的问题分类已不存在，请重新选择分类");
 		}
-		
+
 		if(intval($row['center']) == 0){
 			return output(OUTPUT_ERROR, "你提交的问题的分类的管理员不存在，等待添加管理员后再提交");	
 		}
-		
-		
+
+
 		//insert pro
 		$userId = getUserId($email);
 		$sql = "INSERT INTO `problem`(`user_id`, `title`, `content`, `phone`, `block_id`, `depart_id`, `state`, `realName`) VALUES ('$userId', '$title', '$content', '$phone', '$block_id', '$depart_id', '$state', '$name')";
@@ -436,10 +436,6 @@ function addProblem() {
 
 		addProblemTime($proId, $userId, $asktime, $state);
 
-		
-		
-		
-
 		$sql = "SELECT * FROM `depart` WHERE `id` = '$depart_id'";
 		$result_depart = mysql_query($sql, $conn);
 		$row = mysql_fetch_array($result_depart);
@@ -449,16 +445,16 @@ function addProblem() {
 			$center = $row['center'];
 			$state = PRO_PASS;
 			addProblemTime($proId, $center, $asktime, $state);
-			
+				
 			sendMSGToAdmin($proId,"有个用户提交了一个问题,已经自动通过审核");
 			sendMSGToFix($proId, $center, "有个用户提交了一个问题");
 			$sql = "UPDATE `problem` SET `state` = '$state' WHERE `id` = '$proId'";
 			mysql_query($sql, $conn);
 		}else{
-			
+				
 			sendMSGToAdmin($proId,"有个用户提交了一个问题");
 		}
-		
+
 		sendMSGToUser($proId, $userId,"你好，你提交的问题会马上解决");
 
 		return output(OUTPUT_SUCCESS, "你的问题已经提交,你可以在导航栏中的“我的反馈记录”里查询进展");
@@ -473,11 +469,11 @@ function updateDepartAdmin() {
 
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
+	}
 	/*
 		id:$id   depart_id
 		email:$name depart manger email
-	*/
+		*/
 
 	if (isset ($_POST['id']) && isset ($_POST['email']) && isset ($_POST['phone'])) {
 
@@ -494,7 +490,7 @@ function updateDepartAdmin() {
 		if (!isEmail($email)) {
 			return output(OUTPUT_ERROR, "邮箱格式不正确");
 		}
-		
+
 		if (!isPhone($phone)) {
 			return output(OUTPUT_ERROR, "电话号码不正确");
 		}
@@ -506,17 +502,17 @@ function updateDepartAdmin() {
 
 		//update admin
 		$userId = getUserId($email);
-		
+
 		if($userId == 0){
 			return output(OUTPUT_ERROR, "添加新邮箱时数据库出错");
 		}
-		
+
 		if(!setUserLev($userId, "2", $phone)){
 			return output(OUTPUT_ERROR, "提升管理员权限时出错");
 		}
-		
+
 		$sql = "UPDATE `depart` SET `center` = '$userId' WHERE `id`= $depart_id";
-		
+
 		if(mysql_query($sql, $conn)){
 			return output(OUTPUT_SUCCESS, "设置管理员成功");
 		}else{
@@ -531,11 +527,11 @@ function updateDepartAdmin() {
 
 function deleteDepartAdmin(){
 	global $conn;
-	
+
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	//检查变量是否存在
 	if (isset ($_POST['id'])) {
 		//获得变量的数据
@@ -547,13 +543,13 @@ function deleteDepartAdmin(){
 		}
 		//防止sql注入
 		$id = mysql_real_escape_string($id);
-		
+
 		if(_deleteDepartAdmin($id)){
 			return output(OUTPUT_ERROR, "管理员删除成功");
 		}else{
 			return output(OUTPUT_ERROR, "管理员删除失败");
 		}
-	}	
+	}
 }
 
 
@@ -562,8 +558,8 @@ function passCheck(){
 
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	if (isset ($_POST['id'])) {
 		//获得表单数据
 		$problemId = intval($_POST['id']);
@@ -580,15 +576,15 @@ function passCheck(){
 			return output(OUTPUT_ERROR, "这个问题已经不存在");
 		}
 		$state = $row["state"];
-		
+
 		if($state != PRO_ASK){
 			return output(OUTPUT_ERROR, "这个问题已经审核过了");		
 		}
-		
+
 		$state = PRO_PASS;
 		$sql = "UPDATE `problem` SET `state`= '$state' where `id` = '$problemId'";
 		$result = mysql_query($sql, $conn);
-		
+
 		if(!$result){
 			return output(OUTPUT_ERROR, "操作失败，请刷新后再操作");		
 		}
@@ -596,15 +592,15 @@ function passCheck(){
 		$adminId = $_SESSION['messagefkId'];
 		$userId = $row["user_id"];
 		$passTime = time();
-		
+
 		$departId = $row["depart_id"];
 		$centerId = getCenterId($departId);
-		
+
 		addProblemTime($problemId, $adminId, $passTime, $state);
 
 		sendMSGToUser($problemId, $userId, "你好，你提交的问题已通过审核");
 		sendMSGToFix($problemId, $centerId, "你好，有新问题提交，请处理");		
-		
+
 		return output(OUTPUT_SUCCESS, "操作成功");	
 
 	} else {
@@ -617,8 +613,8 @@ function notPassCheck(){
 
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	if (isset ($_POST['id'])) {
 		//获得表单数据
 		$problemId = intval($_POST['id']);
@@ -634,16 +630,16 @@ function notPassCheck(){
 		if(!$row = mysql_fetch_array($result)){
 			return output(OUTPUT_ERROR, "这个问题已经不存在");
 		}
-		
+
 		$state = $row["state"];
 		if($state != PRO_ASK ){
 			return output(OUTPUT_ERROR, "这个问题已经处理过了");		
 		}
-		
+
 		$state = PRO_NOT_PASS;
 		$sql = "UPDATE `problem` SET `state`= '$state' where `id` = '$problemId'";
 		$result = mysql_query($sql, $conn);
-		
+
 		if(!$result){
 			return output(OUTPUT_ERROR, "审核失败，请刷新后再审核");		
 		}
@@ -654,9 +650,8 @@ function notPassCheck(){
 
 		addProblemTime($problemId, $adminId, $passTime, $state);
 
-		sendMSGToUser($problemId, $userId, "你好，你提交的问题未经过审核。");
-		//sendMSGToAdmin($problemId, "");		
-		
+		sendMSGToUser($problemId, $userId, "你好，你提交的问题未经过审核。");		
+
 		return output(OUTPUT_SUCCESS, "操作成功");	
 
 	} else {
@@ -669,8 +664,8 @@ function accept(){
 
 	if(!checkLev(LEV_FIX)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	if (isset ($_POST['id'])) {
 		//获得表单数据
 		$problemId = intval($_POST['id']);
@@ -686,16 +681,16 @@ function accept(){
 		if(!$row = mysql_fetch_array($result)){
 			return output(OUTPUT_ERROR, "这个问题已经不存在");
 		}
-		
+
 		$state = $row["state"];
 		if($state != PRO_PASS ){
 			return output(OUTPUT_ERROR, "这个问题已经处理过了");		
 		}
-		
+
 		$state = PRO_ACCEPT;
 		$sql = "UPDATE `problem` SET `state`= '$state' where `id` = '$problemId'";
 		$result = mysql_query($sql, $conn);
-		
+
 		if(!$result){
 			return output(OUTPUT_ERROR, "审核失败，请刷新后再审核");		
 		}
@@ -706,9 +701,8 @@ function accept(){
 
 		addProblemTime($problemId, $fixId, $acceptTime, $state);
 
-		sendMSGToUser($problemId, $userId, "你好，你的问题已经受理，现在正在维修中");
-		//sendMSGToFix($problemId, $fixId, "");		
-		
+		sendMSGToUser($problemId, $userId, "你好，你的问题已经受理，现在正在维修中");	
+
 		return output(OUTPUT_SUCCESS, "受理通过");	
 
 	} else {
@@ -718,13 +712,13 @@ function accept(){
 
 
 function finish(){
-	
+
 	global $conn;
 
 	if(!checkLev(LEV_FIX)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}	
-	
+	}
+
 	if (isset ($_POST['id']) && isset ($_POST['chargeContent']) && isset ($_POST['totalCharge']) && isset ($_POST['fixProple']) && isset ($_POST['fixResult'])) {
 		//获得表单数据
 		$problemId = intval($_POST['id']);
@@ -732,14 +726,14 @@ function finish(){
 		$totalCharge = intval($_POST['totalCharge']);
 		$fixProple = ($_POST['fixProple']);
 		$fixResult = ($_POST['fixResult']);
-		
-	
+
+
 		//检查表单数据是否合法
 		if ($problemId == 0 || strcmp($chargeContent,"") == 0 || strcmp($fixResult,"") == 0 || strcmp($fixProple,"") == 0 ) {
 			return output(OUTPUT_ERROR, "表单填写不完整");
 		}
-		
-		
+
+
 		//操作数据库
 		$sql = "select * from problem where id = '$problemId'";
 		$result = mysql_query($sql, $conn);
@@ -751,17 +745,17 @@ function finish(){
 		if($state != PRO_ACCEPT ){
 			return output(OUTPUT_ERROR, "这个问题已经处理过了");		
 		}
-		
+
 		//prevent xss
 		$chargeContent = xss($chargeContent);
 		$fixProple = xss($fixProple);
 		$fixResult = xss($fixResult);
-		
+
 		//Prevent sql injection
 		$chargeContent = mysql_real_escape_string($chargeContent);
 		$fixProple = mysql_real_escape_string($fixProple);
 		$fixResult = mysql_real_escape_string($fixResult);
-		
+
 		$askTime = getStateTime($problemId, PRO_ASK);
 		$finishtime = time();
 		$totalTime = $finishtime - $askTime;
@@ -769,53 +763,53 @@ function finish(){
 		$state = PRO_FINISH;
 		$sql = "UPDATE `problem` SET `fixProple` = '$fixProple',`total_time` = '$totalTime',`totalCharge` = '$totalCharge',`state`= '$state', `chargeContent` = '$chargeContent', `result` = '$fixResult' where `id` = '$problemId'";
 		$result = mysql_query($sql, $conn);
-		
+
 		if(!$result){
 			return output(OUTPUT_ERROR, "审核失败，请刷新后再审核");		
 		}
-		
+
 		$fixId = $_SESSION['messagefkId'];
-		
+
 		$acceptTime = time();
 
 		addProblemTime($problemId, $fixId, $finishtime, $state);
 
 		sendMSGToUser($problemId, $userId, "你好，你的问题完成，请去评价");
-		sendMSGToAdmin($problemId,"问题编号为 $problemId 的问题已完成");
-		
+		sendMSGToAdmin($problemId,"问题编号为 $problemId 的问题已维修完成");
+
 		return output(OUTPUT_SUCCESS, "问题完成");	
 	} else {
 		return output(OUTPUT_ERROR, "表单填写不完整");
 	}
-	
-	
+
+
 }
 
 
 function over(){
 	global $conn;
-	
+
 
 	if(checkLev(LEV_VISITOR)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
-	}		
-	
+	}
+
 	if (isset ($_POST['id']) && isset ($_POST['starConetnt']) && isset ($_POST['star'])) {
 		//获得表单数据
 		$problemId = intval($_POST['id']);
 		$starConetnt = ($_POST['starConetnt']);
 		$star = intval($_POST['star']);
-	
+
 		//检查表单数据是否合法
 		if ($problemId == 0 || strcmp($starConetnt,"") == 0 ) {
 			return output(OUTPUT_ERROR, "表单填写不完整");
 		}
-		
+
 		//检查表单数据是否合法
 		if ($star <1 || $star > 5) {
 			return output(OUTPUT_ERROR, "非法数据");
 		}
-		
+
 		//操作数据库
 		$sql = "select * from problem where id = '$problemId'";
 		$result = mysql_query($sql, $conn);
@@ -827,38 +821,68 @@ function over(){
 		if($state != PRO_FINISH ){
 			return output(OUTPUT_ERROR, "这个问题已经处理过了");		
 		}
-		
+
 		$_userId =  $_SESSION['messagefkId'];
-		
+
 		if($_userId != $userId){
 			return output(OUTPUT_ERROR, "你没有此操作的权限");
 		}
-		
+
 		//prevent xss
 		$starConetnt = xss($starConetnt);
-		
+
 		//Prevent sql injection
 		$starConetnt = mysql_real_escape_string($starConetnt);
-		
+
 		$overtime = time();
-		
+
 		$state = PRO_OVER;
 		$sql = "UPDATE `problem` SET `state`= '$state', `star` = '$star' , `starContent` = '$starConetnt' where `id` = '$problemId'";
 		$result = mysql_query($sql, $conn);
-		
+
 		if(!$result){
 			return output(OUTPUT_ERROR, "操作失败，请刷新后再操作");		
 		}
-		
+
 		addProblemTime($problemId, $_userId, $overtime, $state);
 
 		sendMSGToAdmin($problemId,"编号为 $problemId 的问题已评价");
-		
+
 		return output(OUTPUT_SUCCESS, "评价完成");	
-		
+
 	} else {
 		return output(OUTPUT_ERROR, "表单填写不完整");
 	}
+}
+
+function everyYearNumberOfRepairs(){
+	global $conn;
+	if(!checkLev(LEV_ADMIN)){
+		return output(OUTPUT_ERROR, "你没有次操作的权限");
+	}
+    $min_year = 0;
+	$sql = "select min(time) time from problem_time";
+	$result_min_time = mysql_query($sql);
+	$row_min_time = mysql_fetch_array($result_min_time);
+	if($row_min_time){
+		$min_year = $row_min_time["time"];
+	}else{
+		return output(OUTPUT_ERROR, "暂时没有数据");
+	}
+	
+	$result_depart = mysql_query("SELECT * FROM depart");
+
+	while($row_depart = mysql_fetch_array($result_depart)){
+		$depart_id=$row_depart['id'];
+		$depart_name=$row_depart['name'];
+		
+		
+		
+		
+	}
+
+
+	return output(OUTPUT_SUCCESS, "next");
 }
 
 ?>
