@@ -14,7 +14,7 @@ $phone_num="8618943696702";
 sms($msg,$phone_num);
 */
 function sms($msg,$phone_num){
-
+    $phone_num = "86".$phone_num;
 	//加载php操作串口的类
 	$flag=false;
 

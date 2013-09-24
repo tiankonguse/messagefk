@@ -388,45 +388,129 @@ function delete_block($id) {
     return false;
 }
 
-function showHighcharts($container, title, xAxis, yTitle, data){
+function showHighcharts_pie($container, title, typeText, data) {
+
     $container.highcharts({
-        title: {
-            text: title,
-            x: -20 //center
-        },
-        xAxis: {
-            categories: xAxis
-        },
-        yAxis: {
-            title: {
-                text: yTitle
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            borderWidth: 0
-        },
-        series: data
+	chart : {
+	    plotBackgroundColor : null,
+	    plotBorderWidth : null,
+	    plotShadow : false
+	},
+	title : {
+	    text : title
+	},
+	tooltip : {
+	    pointFormat : '{series.name}: <b>{point.percentage:.1f}%</b>'
+	},
+	plotOptions : {
+	    pie : {
+		allowPointSelect : true,
+		cursor : 'pointer',
+		dataLabels : {
+		    enabled : true,
+		    color : '#000000',
+		    connectorColor : '#000000',
+		    format : '<b>{point.name}</b>: {point.percentage:.1f} %'
+		},
+		showInLegend : true
+	    }
+	},
+
+	series : [ {
+	    type : 'pie',
+	    name : typeText,
+	    data : data
+	} ]
     });
 }
 
+function showHighcharts_line($container, title, xAxis, yTitle, data) {
+    $container.highcharts({
+	title : {
+	    text : title,
+	    x : -20
+	// center
+	},
+	xAxis : {
+	    categories : xAxis
+	},
+	yAxis : {
+	    title : {
+		text : yTitle
+	    },
+	    plotLines : [ {
+		value : 0,
+		width : 1,
+		color : '#808080'
+	    } ]
+	},
+	legend : {
+	    layout : 'vertical',
+	    align : 'right',
+	    verticalAlign : 'middle',
+	    borderWidth : 0
+	},
+	series : data
+    });
+}
 
-function everyYearNumberOfRepairs(className){
-    $container = $("."+className);
-    $.post("inc/manger.php?state=18", {
-    }, function(d) {
+function everyYearNumberOfRepairs(className) {
+    var $container = $("." + className);
+    
+    $.post("inc/manger.php?state=18", {}, function(d) {
 	if (d.code == 0) {
-	    $container.html(d.message);
+	    var obj = d.message;
+	    var _data = obj.data;
+	    var l = _data.length;
+	    var H_data = [];
+	    var data;
+	    for ( var i = 0; i < l; i++) {
+		H_data[i] = {
+		    "name" : _data[i]["name"],
+		    "data" : null
+		};
+		data = _data[i]["data"];
+		for ( var j in data) {
+		    data[j] = parseInt(data[j]);
+		}
+		H_data[i]["data"] = data;
+	    }
+	    
+	    showHighcharts_line($container, "各类别项目每年以及到目前位置的维修次数", obj.xAxis,
+		    "个数", H_data);
+
 	} else {
 	    $container.html(d.message);
 	}
     }, "json");
 }
+
+function proportionOfRepairs(className) {
+    var $container = $("." + className);
+    $.post("inc/manger.php?state=19", {}, function(d) {
+	if (d.code == 0) {
+	     var obj = d.message;
+	     showHighcharts_pie($container, "各类别项目的维修次数比例" , "维修次数", obj);
+	} else {
+	    $container.html(d.message);
+	}
+    }, "json");
+}
+
+function getProportionOfDepart(className,title, typeText,departName) {
+    var $container = $("." + className);
+    $.post("inc/manger.php?state=20", {
+	departName:departName
+    }, function(d) {
+	console.log(d);
+	if (d.code == 0) {
+	     var obj = d.message;
+	     
+	     showHighcharts_pie($container, title , typeText, obj);
+	} else {
+	    $container.html(d.message);
+	}
+    }, "json");
+}
+
 

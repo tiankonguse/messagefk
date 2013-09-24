@@ -20,6 +20,8 @@
  finish => 16
  over => 17
  everyYearNumberOfRepairs => 18
+ proportionOfRepairs => 19
+ getProportionOfDepart => 20
  */
 session_start();
 require_once("init.php");
@@ -71,6 +73,8 @@ if((!$conn || !$result) && $ret){
 			case 16:echo $json->encode(finish());break;
 			case 17:echo $json->encode(over());break;
 			case 18:echo $json->encode(everyYearNumberOfRepairs());break;
+			case 19:echo $json->encode(proportionOfRepairs());break;
+			case 20:echo $json->encode(getProportionOfDepart());break;
 		}
 	}
 }

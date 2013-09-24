@@ -445,13 +445,13 @@ function addProblem() {
 			$center = $row['center'];
 			$state = PRO_PASS;
 			addProblemTime($proId, $center, $asktime, $state);
-				
+
 			sendMSGToAdmin($proId,"有个用户提交了一个问题,已经自动通过审核");
 			sendMSGToFix($proId, $center, "有个用户提交了一个问题");
 			$sql = "UPDATE `problem` SET `state` = '$state' WHERE `id` = '$proId'";
 			mysql_query($sql, $conn);
 		}else{
-				
+
 			sendMSGToAdmin($proId,"有个用户提交了一个问题");
 		}
 
@@ -860,8 +860,11 @@ function everyYearNumberOfRepairs(){
 	if(!checkLev(LEV_ADMIN)){
 		return output(OUTPUT_ERROR, "你没有次操作的权限");
 	}
-    $min_year = 0;
-	$sql = "select min(time) time from problem_time";
+	$min_year = 0;
+
+	$res = array();
+
+	$sql = "select min(time) time from problem_time where state = '1'";
 	$result_min_time = mysql_query($sql);
 	$row_min_time = mysql_fetch_array($result_min_time);
 	if($row_min_time){
@@ -869,20 +872,149 @@ function everyYearNumberOfRepairs(){
 	}else{
 		return output(OUTPUT_ERROR, "暂时没有数据");
 	}
-	
+	$min_year = date("Y",$min_year) - 1;
+
+	$sql = "select max(time) time from problem_time where state = '1'";
+	$result_max_time = mysql_query($sql);
+	$row_max_time = mysql_fetch_array($result_max_time);
+	if($row_max_time){
+		$max_year = $row_max_time["time"];
+	}else{
+		return output(OUTPUT_ERROR, "暂时没有数据");
+	}
+	$max_year = date("Y",$max_year);
+
+	$year = array();
+	for($i = $min_year; $i <= $max_year; $i++){
+		$year[] = $i;
+	}
+	$res["xAxis"] = $year;
+	$res["data"] = array();
+
 	$result_depart = mysql_query("SELECT * FROM depart");
 
 	while($row_depart = mysql_fetch_array($result_depart)){
 		$depart_id=$row_depart['id'];
 		$depart_name=$row_depart['name'];
-		
-		
-		
-		
+
+		$depart = array();
+
+		for($now_year = $min_year; $now_year<= $max_year; $now_year++){
+			$startTime = mktime(0,0,0,1,1,$now_year);
+			$endTime = mktime(23,59,59,12,31,$now_year);
+			$sql = "select count(*) num from problem_time where (time between $startTime and $endTime) and state = '1' and pro_id in (select id from problem where depart_Id = '$depart_id')";
+			$result = mysql_query($sql);
+			$row = mysql_fetch_array($result);
+			$depart[] = $row["num"];
+		}
+		$res["data"][] = array(
+		  "name"=>$depart_name,
+		"data"=>$depart
+		);
+	}
+	return output(OUTPUT_SUCCESS, $res);
+}
+
+function proportionOfRepairs(){
+	global $conn;
+	if(!checkLev(LEV_ADMIN)){
+		return output(OUTPUT_ERROR, "你没有次操作的权限");
 	}
 
+	$sql = "select count(*) num from problem";
+	$result = mysql_query($sql);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$res = array();
+	$tmp = 0;
 
-	return output(OUTPUT_SUCCESS, "next");
+	if($allNum == 0){
+		$res[] = array(
+              "name"=>"暂无数据",
+              "y"=>100
+		);
+		return output(OUTPUT_SUCCESS, $res);
+	}
+
+	$result_depart = mysql_query("SELECT * FROM depart");
+	while($row_depart = mysql_fetch_array($result_depart)){
+		$depart_id=$row_depart['id'];
+		$depart_name=$row_depart['name'];
+
+		$sql = "select count(*) num from problem where depart_Id = '$depart_id'";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_array($result);
+		$res[] = array(
+		  "name"=>$depart_name,
+		  "y"=>$row["num"] * 100 /$allNum
+		);
+		$tmp += $row["num"];
+	}
+	$res[] = array(
+          "name"=>"other",
+          "y"=>($allNum - $tmp) * 100 /$allNum
+	);
+	return output(OUTPUT_SUCCESS, $res);
+
 }
+
+
+function getProportionOfDepart(){
+
+	if(!checkLev(LEV_ADMIN)){
+		return output(OUTPUT_ERROR, "你没有次操作的权限");
+	}
+
+	global $conn;
+
+	if (isset ($_POST['departName'])) {
+		$departName = $_POST['departName'];
+		$depart_id = getDepartIdByName($departName);
+		$sql = "select count(*) num from problem where depart_Id = '$depart_id'";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_array($result);
+		$allNum = $row["num"];
+
+		$res = array();
+
+
+		if($allNum == 0){
+			$res[] = array(
+	          "name"=>"暂无数据",
+	          "y"=>100
+			);
+			return output(OUTPUT_SUCCESS, $res);
+		}
+
+		$tmp = 0;
+
+		$result_depart = mysql_query("SELECT * FROM map_block_depart where depart_id = '$depart_id'");
+		while($row_depart = mysql_fetch_array($result_depart)){
+			$block_id=$row_depart['block_id'];
+
+			$result_block = mysql_query("SELECT name FROM block where id = '$block_id'");
+			$row_block = mysql_fetch_array($result_block);
+			$block_name=$row_block['name'];
+
+			$sql = "select count(*) num from problem where block_id = '$block_id'";
+			$result = mysql_query($sql);
+			$row = mysql_fetch_array($result);
+			$res[] = array(
+          "name"=>$block_name,
+          "y"=>$row["num"] * 100 /$allNum
+			);
+			$tmp += $row["num"];
+		}
+		$res[] = array(
+          "name"=>"other",
+          "y"=>($allNum - $tmp) * 100 /$allNum
+		);
+		return output(OUTPUT_SUCCESS, $res);
+	}else{
+		return output(OUTPUT_ERROR, "非法操作");
+	}
+}
+
+
 
 ?>

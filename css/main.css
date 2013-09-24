@@ -1,280 +1,332 @@
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td
-	{
-	margin: 0;
-	padding: 0;
+    {
+    margin: 0;
+    padding: 0;
 }
 
 body {
-	background: #e6f7fe;
+    background: #e6f7fe;
 }
 
 .err {
-	background: url(../img/icon_del.gif) no-repeat left center;
-	color: Red;
-	text-indent: 15px;
+    background: url(../img/icon_del.gif) no-repeat left center;
+    color: Red;
+    text-indent: 15px;
 }
 
 .ok {
-	background: url(../img/ok.gif) no-repeat left center;
-	color: #116D1E;
-	text-indent: 15px;
+    background: url(../img/ok.gif) no-repeat left center;
+    color: #116D1E;
+    text-indent: 15px;
 }
 
 .text-error {
-	color: Red;
+    color: Red;
 }
 
 .width1 {
-	width: 10px;
+    width: 10px;
 }
 
 .width2 {
-	width: 20px;
+    width: 20px;
 }
 
 .margin-left2 {
-	margin-left: 20px;
+    margin-left: 20px;
 }
 
 .height1 {
-	height: 10px;
+    height: 10px;
 }
 
 .height2 {
-	height: 20px;
+    height: 20px;
 }
 
 .height5 {
-	height: 50px;
+    height: 50px;
 }
 
 .right-iframe {
-	width: 870px;
-	height: 500px;
+    width: 870px;
+    height: 500px;
 }
 
 .content-center {
-	height: auto;
+    height: auto;
 }
 
 .content-center .content {
-	width: 600px;
-	height: 300px;
+    width: 600px;
+    height: 300px;
 }
 
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td
-	{
-	margin: 0;
-	padding: 0;
-	border: 0;
+    {
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 .wrap {
-	border: 1px dotted rgb(192, 182, 182);
-	width: 1003px;
-	height: auto;
-	margin: 20px auto;
-	display: block;
-	padding: 5px;
-	cursor: default;
-	background-color: #fff;
-	-webkit-box-shadow: 0 5px 10px #666;
-	-moz-box-shadow: 0 5px 10px #666;
-	box-shadow: 0 5px 10px #666;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-o-border-radius: 5px;
-	border-radius: 5px;
+    border: 1px dotted rgb(192, 182, 182);
+    width: 1003px;
+    height: auto;
+    margin: 20px auto;
+    display: block;
+    padding: 5px;
+    cursor: default;
+    background-color: #fff;
+    -webkit-box-shadow: 0 5px 10px #666;
+    -moz-box-shadow: 0 5px 10px #666;
+    box-shadow: 0 5px 10px #666;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .top {
-	width: 1003px;
-	height: 82px;
+    width: 1003px;
+    height: 82px;
 }
 
 .top .logo {
-	margin-left: 1px;
+    margin-left: 1px;
 }
 
 .loginbox {
-	width: auto;
-	border: 1px solid #88badf;
-	margin: 10px;
+    width: auto;
+    border: 1px solid #88badf;
+    margin: 10px;
 }
 
 .login-hint-line {
-	width: 100%;
-	background: url(../img/columnbg.gif) repeat-x;
-	border-left: 1px solid #fff;
-	border-right: 1px solid #fff;
-	border: 1px solid #88BADF;
-	text-align: center;
-	margin-bottom: 20px;
+    width: 100%;
+    background: url(../img/columnbg.gif) repeat-x;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    border: 1px solid #88BADF;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .login-hint-title {
-	width: 120px;
-	height: 38px;
-	line-height: 38px;
-	margin-left: 10px;
-	margin-right: 38px;
-	overflow: hidden;
-	font-family: "Microsoft YaHei", "微软雅黑", tahoma, arial, simsun, "宋体";
+    width: 120px;
+    height: 38px;
+    line-height: 38px;
+    margin-left: 10px;
+    margin-right: 38px;
+    overflow: hidden;
+    font-family: "Microsoft YaHei", "微软雅黑", tahoma, arial, simsun, "宋体";
 }
 
 .add_infomation {
-	width: 355px;
-	margin-left: 20px;
-	font-size: 18px;
-	line-height: 18px;
-	color: #666666;
+    width: 355px;
+    margin-left: 20px;
+    font-size: 18px;
+    line-height: 18px;
+    color: #666666;
 }
 
 .add_infomation b {
-	color: Red;
+    color: Red;
 }
 
 .mini-layout {
-	min-height: 300px;
-	height: auto;
+    min-height: 300px;
+    height: auto;
 }
 
 .content-inner {
-	margin-left: 20px;
-	margin-right: 20px;
-	padding: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 20px;
 }
 
 .info {
-	right: 10px;
-	position: absolute;
+    right: 10px;
+    position: absolute;
 }
 
 /* flowstep begin */
 .flowstep .step-no {
-	background: url(../img/T1ze0ZXA0aXXcVlxZa-734-340.png) no-repeat 50%
-		-102px
+    background: url(../img/T1ze0ZXA0aXXcVlxZa-734-340.png) no-repeat 50%
+        -102px
 }
 
 .flowstep {
-	width: 990px;
-	margin: 0 auto;
-	padding: 20px 0
+    width: 990px;
+    margin: 0 auto;
+    padding: 20px 0
 }
 
 .flowstep ol {
-	overflow: hidden;
-	zoom: 1;
+    overflow: hidden;
+    zoom: 1;
 }
 
 .flowstep li {
-	float: left;
-	text-align: center;
-	list-style: none;
+    float: left;
+    text-align: center;
+    list-style: none;
 }
 
 .flowstep .step-name {
-	padding: 3px 0;
-	font-weight: 700;
-	color: #888;
+    padding: 3px 0;
+    font-weight: 700;
+    color: #888;
 }
 
 .flowstep .step-no {
-	height: 34px;
-	line-height: 34px;
-	font-family: 'arial black';
-	color: #fff;
-	font-size: 18px;
+    height: 34px;
+    line-height: 34px;
+    font-family: 'arial black';
+    color: #fff;
+    font-size: 18px;
 }
 
 .flowstep .step-last .step-no {
-	background-position: 50% -136px;
+    background-position: 50% -136px;
 }
 
 .flowstep .step-first .step-down .step-no {
-	background-position: 50% -204px;
+    background-position: 50% -204px;
 }
 
 .flowstep .step-last .step-down .step-no {
-	background-position: 50% -68px;
+    background-position: 50% -68px;
 }
 
 .flowstep .step-down .step-name {
-	color: #009349;
+    color: #009349;
 }
 
 .flowstep .step-down .step-no {
-	background-position: 50% -170px;
+    background-position: 50% -170px;
 }
 
 .flowstep-4 {
-	width: 1000px;
-	margin-left: 10px;
+    width: 1000px;
+    margin-left: 10px;
 }
 
 .flowstep-4 li {
-	width: 150px;
+    width: 150px;
 }
 
 /* flowstep end */
 
 /* problem   */
 .problem-table-head {
-	font-weight: bold;
-	color: #2b7eca;
+    font-weight: bold;
+    color: #2b7eca;
 }
 
 .chargeContent {
-	width: 450px;
-	height: 70px;
+    width: 450px;
+    height: 70px;
 }
 
 .red {
-	color: red;
+    color: red;
 }
 
 .grade-box {
-	background: url("../img/video-grade-bg.gif") repeat-x scroll 0 -40px
-		transparent;
-	display: block;
-	float: left;
-	height: 20px;
-	overflow: hidden;
-	position: relative;
-	width: 130px;
+    background: url("../img/video-grade-bg.gif") repeat-x scroll 0 -40px
+        transparent;
+    display: block;
+    float: left;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+    width: 130px;
 }
 
 .grade-box ul {
-	display: block;
-	height: 20px;
-	left: 0;
-	overflow: hidden;
-	position: absolute;
-	top: 0;
-	width: 130px;
-	z-index: 3;
+    display: block;
+    height: 20px;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 130px;
+    z-index: 3;
 }
 
 .grade-box li {
-	cursor: pointer;
-	display: block;
-	float: left;
-	height: 20px;
-	width: 26px;
-	z-index: 1;
-	list-style: none;
-	overflow: hidden;
+    cursor: pointer;
+    display: block;
+    float: left;
+    height: 20px;
+    width: 26px;
+    z-index: 1;
+    list-style: none;
+    overflow: hidden;
 }
 
 .grade-box .start-grade {
-	background: url("../img/video-grade-bg.gif") repeat-x scroll 0 0
-		transparent;
-	display: block;
-	height: 20px;
-	left: 0;
-	position: absolute;
-	top: 0;
-	width: 0;
-	z-index: 2;
+    background: url("../img/video-grade-bg.gif") repeat-x scroll 0 0
+        transparent;
+    display: block;
+    height: 20px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 2;
 }
 
+.pagination {
+    padding: 3px;
+    text-align: center;
+    font-family: Verdana;
+    font-size: 12px;
+    margin-top: 15px;
+    padding-top: 0;
+    margin-bottom: 5px;
+}
+
+.pagination a {
+    padding: 2px 5px;
+    margin: 2px;
+    margin-top: 0px;
+    color: #666;
+    text-decoration: none;
+}
+
+.pagination .current {
+    padding: 2px 5px;
+    font-weight: bold;
+    margin: 2px;
+    color: #3E7AC6;
+}
+
+.pagination input {
+    color: #333;
+    font-size: 12px;
+    border: 1px solid #A4CBE1;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination input[type="text"] {
+    width: 25px;
+    height: 16px;
+    margin-top: -2px;
+}
+
+.pagination input[type="button"] {
+    width: 28px;
+    height: 18px;
+    margin-top: -2px;
+    background-color: #4FA0D5;
+    color: #fff;
+    font-family: 宋体;
+}
+
+.pagination a.not_current:hover {
+    color: #fff;
+    background-color: #3E7AC6;
+}

@@ -68,18 +68,18 @@ $suggestTime = getStateTime($problemId,1);
 if($state != PRO_NOT_PASS){
 	if($state >= PRO_PASS){
 		$passTime = getStateTime($problemId, PRO_PASS);
-		$passTime = date("Y-m-d h:i:s",$passTime);
+		$passTime = date("Y-m-d H:i:s",$passTime);
 	}
 	if($state >= PRO_ACCEPT){
 		$acceptTime = getStateTime($problemId, PRO_ACCEPT);
-		$acceptTime = date("Y-m-d h:i:s",$acceptTime);
+		$acceptTime = date("Y-m-d H:i:s",$acceptTime);
 		
 		$fixEmail = getUserEmail($departMangerId);
 	}
 	
 	if($state >= PRO_FINISH){
 		$finishTime = getStateTime($problemId, PRO_FINISH);
-		$finishTime = date("Y-m-d h:i:s",$finishTime);
+		$finishTime = date("Y-m-d H:i:s",$finishTime);
 		
 		$tmp = $totalTime;
 		$totalTime = "";
@@ -108,16 +108,16 @@ if($state != PRO_NOT_PASS){
 	
 	if($state >= PRO_OVER){
 		$overTime = getStateTime($problemId, PRO_OVER);
-		$overTime = date("Y-m-d h:i:s",$overTime);
+		$overTime = date("Y-m-d H:i:s",$overTime);
 	}
 	
 	
 }
 
 
-$formId = date("Ymdhis",$suggestTime) . $problemId;
+$formId = date("YmdHis",$suggestTime) . $problemId;
 
-$suggestTime = date("Y-m-d h:i:s",$suggestTime);
+$suggestTime = date("Y-m-d H:i:s",$suggestTime);
 
 $stateHtml = getStateHtml($state);
 

@@ -82,6 +82,9 @@ $type  =  2;
 </div>
 <script>
 
+var now_state = 1;
+var now_page = 1;
+var now_name = "nav_user";
 
 function remove_active(){
 	$(".content .row ul.nav li.active").removeClass("active");
@@ -92,23 +95,41 @@ function setUrl(name,state){
     history.pushState(_state,'','?name='+name+'&state='+state);	
 }
 
-function ajax_fun(name,state){
+function ajax_fun(name,state, page){
 	setUrl(name,state);
 	$.post("inc/ajax.php",{
 		name:name,
+            page:page,
 		state:state
 	},function(d){
 		if(d.code==0){
 			$(".span7.mini-layout").html(d.message);
+			addListening();
 		}
 	},"json");
 }
-
+function addListening(){
+    $(".pagination a.not_current").bind("click",function(e){
+        var that = $(e.target);
+        var text = that.text();
+        if(text == "上一页"){
+            now_page--;
+        }else if(text == "下一页"){
+            now_page++;
+        }else{
+            now_page = text;
+        }
+        ajax_fun(now_name,now_state, now_page);
+    });
+}
 function getHtml(name,state){
 	if(name == 'nav_user'){
+	    now_state = state;
+	    now_page = 1;
+	    now_name = name;
 		remove_active();
 		$(".user_nav"+state).addClass("active");
-		ajax_fun(name,state);
+		ajax_fun(now_name,now_state, now_page);
 	}
 }
 

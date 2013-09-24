@@ -29,11 +29,11 @@ function getMangerDepart(){
 
 		$userId = intval($sendTocenter);
 		$userEmail = getUserEmail($userId);
-		
+
 		if(strcmp($userEmail,"") == 0){
 			$userEmail = "暂时没有管理员";
 		}
-		
+
 		$html .= "
 			<tr data-id='$id' id='depart$id'>
 				<td>
@@ -115,22 +115,109 @@ function getMangerBlock($code){
 }
 
 
+function getPageHtml($page, $allsize, $allNum, $pagesize){
+	$html = "";
+	$html .= "<div id=\"Pagination\" class=\"pagination\">";
+	if($allsize > 0){
+		$html .= "<a href=\"javascript:void(0);\" class=\"".(1 == $page?"":"not_current")."\" >上一页</a>";
+
+		if($allsize <= 9 && $allsize > 0){
+			for($i = 1;$i<=$allsize;$i++){
+
+				$html .= "<a href=\"javascript:void(0);\" class=\"".($i == $page?"current":"not_current")."\" >$i</a>";
+			}
+		}else if($allsize > 0){
+			for($i = 1;$i<=3;$i++){
+				$html .= "<a href=\"javascript:void(0);\" class=\"".($i == $page?"current":"not_current")."\" >$i</a>";
+			}
+
+			if($page == 3){
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\">4</a>";
+				$html .= "<span>...</span>";
+			}else if($page == 4){
+				$html .= "<a href=\"javascript:void(0);\" class=\"current\" >4</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >5</a>";
+				$html .= "<span>...</span>";
+			}else if($page == 5){
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >4</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"current\">5</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >6</a>";
+				$html .= "<span>...</span>";
+			}else if($page == $allsize -2){
+				$html .= "<span>...</span>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >".($page-1)."</a>";
+			}else if($page == $allsize -3){
+				$html .= "<span>...</span>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >".($page-1)."</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"current\">".($page)."</a>";
+			}else if($page == $allsize -4){
+				$html .= "<span>...</span>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >".($page-1)."</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"current\" >".($page)."</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >".($page+1)."</a>";
+			}else if($page > 5 && $page < $allsize -4){
+				$html .= "<span>...</span>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\" >".($page-1)."</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"current\" >".($page)."</a>";
+				$html .= "<a href=\"javascript:void(0);\" class=\"not_current\">".($page+1)."</a>";
+				$html .= "<span>...</span>";
+			}else{
+				$html .= "<span>...</span>";
+			}
+
+			for($i = $allsize-2;$i<=$allsize;$i++){
+				$html .= "<a href=\"javascript:void(0);\" class=\"".($i == $page?"current":"not_current")."\" >$i</a>";
+			}
+		}
+		$html .= "<a href=\"javascript:void(0);\" class=\"".($allsize == $page?"":"not_current")."\" >下一页</a>";
+	}
+
+	$html .= "共 $allNum 条记录";
+	//$html .= "跳转到&nbsp;<input type=\"text\" maxlength=\"5\">&nbsp;页&nbsp;";
+	//$html .= "<input type=\"buttogetUserAllProblemn\"  value=\"GO\" >";
+	$html .= "</div>";
+	return $html;
+}
+
 $stateName = array(
-    1=>"等待审核",
-    2=>"等待受理",
-    3=>"等待维修",
-    4=>"等待评价",
-    5=>"已完成",
-    6=>"未通过审核"
+1=>"等待审核",
+2=>"等待受理",
+3=>"等待维修",
+4=>"等待评价",
+5=>"已完成",
+6=>"未通过审核"
 );
 
-function getAdminStateProblem($state){
-    global $conn;
-   global $stateName;
-    
+function getAdminStateProblem($state,$pagesize = 10){
+	global $conn;
+	global $stateName;
+
 	if(!checkLev(3) ){
 		return output(0, "你的权限不足");
 	}
+
+	$page = 1;
+	if(isset($_POST["page"])){
+		$page = intval($_POST["page"]);
+	}
+
+	$sql = "SELECT count(*) num FROM `problem` WHERE `state` = '$state'";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$allsize = intval(($allNum + $pagesize -1 )/$pagesize);
+
+	if($page < 1){
+		$page = 1;
+	}
+	if($page > $allsize){
+		$page = $allsize;
+	}
+
+	$index = ($page - 1) * $pagesize;
+
+	global $conn;
+	global $stateName;
 
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
@@ -145,23 +232,23 @@ function getAdminStateProblem($state){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' ORDER BY  `id` DESC";
+	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' ORDER BY  `id` DESC limit $index,$pagesize";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
-	
+
 		$pro_id = $row['id'];
 		$pro_title = $row['title'];
 		$depart_id = $row['depart_id'];
 		$depart_name = getDepartName($depart_id);
-		
+
 		$asktime = getStateTime($pro_id,"1");
 		if($asktime == ""){
-		  $asktime = "未知";
+			$asktime = "未知";
 		}else{
-		  $asktime = date("Y-m-d h:i:s",$asktime);
+			$asktime = date("Y-m-d H:i:s",$asktime);
 		}
 		$stateHtml = getStateHtml($state);
-		
+
 
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
@@ -176,7 +263,8 @@ function getAdminStateProblem($state){
 
 	$html .= "</tbody>";
 	$html .= "</table>";
-
+	$pageHtml = getPageHtml($page, $allsize, $allNum, $pagesize);
+	$html .= $pageHtml;
 	return output(0, $html);
 }
 
@@ -208,12 +296,35 @@ function getAdminNotPassProblem(){
 }
 
 
-function getUserAllProblem(){
+function getUserAllProblem($pagesize = 10){
 	global $conn;
 
 	if(checkLev(0) ){
 		return output(0, "请先登录再操作");
 	}
+
+	$userId    = intval($_SESSION['messagefkId']);
+	$page = 1;
+	if(isset($_POST["page"])){
+		$page = intval($_POST["page"]);
+	}
+
+	$sql = "SELECT count(*) num FROM `problem` WHERE `user_id` = '$userId'";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$allsize = intval(($allNum + $pagesize -1 )/$pagesize);
+
+	if($page < 1){
+		$page = 1;
+	}
+	if($page > $allsize){
+		$page = $allsize;
+	}
+
+	$index = ($page - 1) * $pagesize;
+
+
 
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
@@ -228,8 +339,8 @@ function getUserAllProblem(){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-	$userId    = intval($_SESSION['messagefkId']);
-	$sql = "SELECT * FROM `problem` WHERE `user_id` = '$userId' ORDER BY  `id` DESC";
+
+	$sql = "SELECT * FROM `problem` WHERE `user_id` = '$userId' ORDER BY  `id` DESC limit $index,$pagesize";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
 		$pro_id = $row['id'];
@@ -239,10 +350,10 @@ function getUserAllProblem(){
 		$state = $row['state'];
 
 		$askTime = getStateTime($pro_id,"1");
-		$askTime = date("Y-m-d h:i:s",$askTime);
+		$askTime = date("Y-m-d H:i:s",$askTime);
 
 		$stateHtml = getStateHtml($state);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
@@ -257,14 +368,43 @@ function getUserAllProblem(){
 	$html .= "</tbody>";
 	$html .= "</table>";
 
+	$pageHtml = getPageHtml($page, $allsize, $allNum, $pagesize);
+	$html .= $pageHtml;
+
 	return output(0, $html);
 }
 
 
-function getUserStateProblem($state){
+function getUserStateProblem($state,$pagesize = 10){
+	global $conn;
 	if(checkLev(0) ){
 		return output(0, "请先登录再操作");
 	}
+
+	$userId    = intval($_SESSION['messagefkId']);
+
+	$page = 1;
+	if(isset($_POST["page"])){
+		$page = intval($_POST["page"]);
+	}
+
+	$sql = "SELECT count(*) num FROM `problem` WHERE `user_id` = '$userId' and `state` = '$state'";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$allsize = intval(($allNum + $pagesize -1 )/$pagesize);
+
+	if($page < 1){
+		$page = 1;
+	}
+	if($page > $allsize){
+		$page = $allsize;
+	}
+
+	$index = ($page - 1) * $pagesize;
+
+
+
 	global $conn;
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
@@ -279,8 +419,8 @@ function getUserStateProblem($state){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-	$userId    = intval($_SESSION['messagefkId']);
-	
+
+
 	$sql = "SELECT * FROM `problem` WHERE `user_id` = '$userId' and `state` = '$state' ORDER BY  `id` DESC";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
@@ -291,10 +431,10 @@ function getUserStateProblem($state){
 		$state = $row['state'];
 
 		$askTime = getStateTime($pro_id,"1");
-		$askTime = date("Y-m-d h:i:s",$askTime);
+		$askTime = date("Y-m-d H:i:s",$askTime);
 
 		$stateHtml = getStateHtml($state);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
@@ -308,6 +448,9 @@ function getUserStateProblem($state){
 
 	$html .= "</tbody>";
 	$html .= "</table>";
+
+	$pageHtml = getPageHtml($page, $allsize, $allNum, $pagesize);
+	$html .= $pageHtml;
 
 	return output(0, $html);
 }
@@ -336,8 +479,30 @@ function getUserNotPassProblem(){
 	return getUserStateProblem(6);
 }
 
-function getIndexAllProblem(){
+
+
+function getIndexAllProblem($pagesize = 10){
 	global $conn;
+
+	$page = 1;
+	if(isset($_POST["page"])){
+		$page = intval($_POST["page"]);
+	}
+
+	$sql = "SELECT count(*) num FROM `problem` WHERE `state` > '1' and `state` < '6'";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$allsize = intval(($allNum + $pagesize -1 )/$pagesize);
+
+	if($page < 1){
+		$page = 1;
+	}
+	if($page > $allsize){
+		$page = $allsize;
+	}
+
+	$index = ($page - 1) * $pagesize;
 
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
@@ -352,7 +517,7 @@ function getIndexAllProblem(){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-	$sql = "SELECT * FROM `problem` WHERE `state` > '1' and `state` < '6' ORDER BY  `id` DESC";
+	$sql = "SELECT * FROM `problem` WHERE `state` > '1' and `state` < '6' ORDER BY  `id` DESC limit $index,$pagesize";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
 		$pro_id = $row['id'];
@@ -362,10 +527,10 @@ function getIndexAllProblem(){
 		$state = $row['state'];
 
 		$askTime = getStateTime($pro_id,"1");
-		$askTime = date("Y-m-d h:i:s",$askTime);
+		$askTime = date("Y-m-d H:i:s",$askTime);
 
 		$stateHtml = getStateHtml($state);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
@@ -380,11 +545,36 @@ function getIndexAllProblem(){
 	$html .= "</tbody>";
 	$html .= "</table>";
 
+	$pageHtml = getPageHtml($page, $allsize, $allNum, $pagesize);
+	$html .= $pageHtml;
+
 	return output(0, $html);
 }
 
-function getIndexStateProblem($state){
+
+function getIndexStateProblem($state, $pagesize = 10){
 	global $conn;
+
+	$page = 1;
+	if(isset($_POST["page"])){
+		$page = intval($_POST["page"]);
+	}
+
+	$sql = "SELECT count(*) num FROM `problem` WHERE `state` = '$state'";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$allsize = intval(($allNum + $pagesize -1 )/$pagesize);
+
+	if($page < 1){
+		$page = 1;
+	}
+	if($page > $allsize){
+		$page = $allsize;
+	}
+
+	$index = ($page - 1) * $pagesize;
+
 
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
@@ -400,7 +590,7 @@ function getIndexStateProblem($state){
 	$html .= "<tbody>";
 
 	$userId    = intval($_SESSION['messagefkId']);
-	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' ORDER BY  `id` DESC";
+	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' ORDER BY  `id` DESC limit $index,$pagesize";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
 		$pro_id = $row['id'];
@@ -410,10 +600,10 @@ function getIndexStateProblem($state){
 		$state = $row['state'];
 
 		$askTime = getStateTime($pro_id,"1");
-		$askTime = date("Y-m-d h:i:s",$askTime);
+		$askTime = date("Y-m-d H:i:s",$askTime);
 
 		$stateHtml = getStateHtml($state);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
@@ -427,6 +617,10 @@ function getIndexStateProblem($state){
 
 	$html .= "</tbody>";
 	$html .= "</table>";
+
+
+	$pageHtml = getPageHtml($page, $allsize, $allNum, $pagesize);
+	$html .= $pageHtml;
 
 	return output(0, $html);
 }
@@ -448,13 +642,37 @@ function getIndexFinishProblem(){
 }
 
 
-function getFixAllProblem(){
+function getFixAllProblem($pagesize = 10){
 	global $conn;
 
 	if(!checkLev(2) ){
 		return output(0, "请先登录再操作");
 	}
-	
+
+	$page = 1;
+	if(isset($_POST["page"])){
+		$page = intval($_POST["page"]);
+	}
+
+	$FixId    = intval($_SESSION['messagefkId']);
+	$sql = "SELECT count(*) num FROM `problem` WHERE `state` > '1' and `state` < '4' and `depart_id` in (select id from depart where center = '$FixId')";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$allsize = intval(($allNum + $pagesize -1 )/$pagesize);
+
+	if($page < 1){
+		$page = 1;
+	}
+	if($page > $allsize){
+		$page = $allsize;
+	}
+
+	$index = ($page - 1) * $pagesize;
+
+
+
+
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
@@ -468,8 +686,8 @@ function getFixAllProblem(){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-	$FixId    = intval($_SESSION['messagefkId']);
-	$sql = "SELECT * FROM `problem` WHERE `state` > '1' and `state` < '4' and `depart_id` in (select id from depart where center = '$FixId') ORDER BY  `id` DESC";
+
+	$sql = "SELECT * FROM `problem` WHERE `state` > '1' and `state` < '4' and `depart_id` in (select id from depart where center = '$FixId') ORDER BY  `id` DESC limit $index,$pagesize";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
 
@@ -480,10 +698,10 @@ function getFixAllProblem(){
 		$state = $row['state'];
 
 		$askTime = getStateTime($pro_id,"1");
-		$askTime = date("Y-m-d h:i:s",$askTime);
+		$askTime = date("Y-m-d H:i:s",$askTime);
 
 		$stateHtml = getStateHtml($state);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
@@ -498,16 +716,41 @@ function getFixAllProblem(){
 	$html .= "</tbody>";
 	$html .= "</table>";
 
+
+	$pageHtml = getPageHtml($page, $allsize, $allNum, $pagesize);
+	$html .= $pageHtml;
 	return output(0, $html);
 }
 
-function getFixStateProblem($state){
+function getFixStateProblem($state, $pagesize = 10){
 	global $conn;
-
 	if(!checkLev(2) ){
 		return output(0, "请先登录再操作");
 	}
-	
+
+	$page = 1;
+	if(isset($_POST["page"])){
+		$page = intval($_POST["page"]);
+	}
+
+	$FixId    = intval($_SESSION['messagefkId']);
+	$sql = "SELECT count(*) num FROM `problem` WHERE `state` = '$state' and `depart_id` in (select id from depart where center = '$FixId')";
+	$result = mysql_query($sql ,$conn);
+	$row = mysql_fetch_array($result);
+	$allNum = $row["num"];
+	$allsize = intval(($allNum + $pagesize -1 )/$pagesize);
+
+	if($page < 1){
+		$page = 1;
+	}
+	if($page > $allsize){
+		$page = $allsize;
+	}
+
+	$index = ($page - 1) * $pagesize;
+
+
+
 	$html = "";
 	$html .= "<table class=\"table table-striped table-bordered table-condensed\" style=\"word-break:break-all;\">";
 	$html .= "<thead>";
@@ -521,8 +764,8 @@ function getFixStateProblem($state){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-	$FixId    = intval($_SESSION['messagefkId']);
-	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' and `depart_id` in (select id from depart where center = '$FixId') ORDER BY  `id` DESC";
+
+	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' and `depart_id` in (select id from depart where center = '$FixId') ORDER BY  `id` DESC limit $index,$pagesize";
 	$result = mysql_query($sql ,$conn);
 	while($row=mysql_fetch_array($result)) {
 
@@ -533,10 +776,10 @@ function getFixStateProblem($state){
 		$state = $row['state'];
 
 		$askTime = getStateTime($pro_id,"1");
-		$askTime = date("Y-m-d h:i:s",$askTime);
+		$askTime = date("Y-m-d H:i:s",$askTime);
 
 		$stateHtml = getStateHtml($state);
-		
+
 		$tr  = "";
 		$tr .= "<tr data-id=\"$pro_id\" id=\"contestant_$pro_id\">";
 		$tr .= "<td>$pro_id</td>";
@@ -550,7 +793,8 @@ function getFixStateProblem($state){
 
 	$html .= "</tbody>";
 	$html .= "</table>";
-
+	$pageHtml = getPageHtml($page, $allsize, $allNum, $pagesize);
+	$html .= $pageHtml;
 	return output(0, $html);
 }
 
@@ -563,10 +807,36 @@ function getFixNowFixingProblem(){
 
 
 function getAdminStatistics(){
+
+	$html = "";
+
 	$t = time ();
-	$className = "highcharts_t_".$t;
-    $html  = "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
-    $html .= "<script>if(everyYearNumberOfRepairs){everyYearNumberOfRepairs(\"$className\");}</script>";
-    return output(0, $html);
+	$className = "highcharts_t1_".$t;
+	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+	$html .= "<script>if(everyYearNumberOfRepairs){everyYearNumberOfRepairs(\"$className\");}</script>";
+
+	$className = "highcharts_t2_".$t;
+	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+	$html .= "<script>if(proportionOfRepairs){proportionOfRepairs(\"$className\");}</script>";
+
+	$className = "highcharts_t3_".$t;
+	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"各学生宿舍的维修次数比例\" , \"维修次数\",\"学生宿舍\");}</script>";
+
+	$className = "highcharts_t4_".$t;
+	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"学院及直属单位的维修次数比例\" , \"维修次数\",\"学院及直属单位\");}</script>";
+
+	$className = "highcharts_t5_".$t;
+	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"公用楼的维修次数比例\" , \"维修次数\",\"公用楼\");}</script>";
+
+	$className = "highcharts_t6_".$t;
+	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"校园公区环境的维修次数比例\" , \"维修次数\",\"校园公区环境\");}</script>";
+
+
+
+	return output(0, $html);
 }
 

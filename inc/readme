@@ -10,3 +10,11 @@ PHP调用minicom发送短信（minicom 作为一个 服务必须开启）
    3.sms函数实现了 返回值true false,以此来判断是否 发出去了短信。
 
 
+
+设置短信
+at+cmgf=1
+
+at+cmgs=
+
+
+

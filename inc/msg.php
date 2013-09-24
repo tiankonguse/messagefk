@@ -27,7 +27,7 @@ function sendMSGToUser($proId, $userId, $msgText){
     }
 }
 function sendMSGToAdmin($proId, $msgText){
-    $phone = getPhoneFromUser($proId);
+    $phone = getPhoneFromUser(6);
     try{
     	sms($msgText,$phone);
     }catch(Exception $e){
@@ -37,7 +37,7 @@ function sendMSGToAdmin($proId, $msgText){
 }
 
 function sendMSGToFix($proId, $FixId, $msgText){
-    $phone = getPhoneFromUser($proId);
+    $phone = getPhoneFromUser($FixId);
     try{
         sms($msgText,$phone);
     }catch(Exception $e){

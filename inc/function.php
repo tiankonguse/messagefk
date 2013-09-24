@@ -1,7 +1,7 @@
 <?php
 
 function xss($srt){
-	//return htmlentities($srt,ENT_NOQUOTES,UTF8); 
+	//return htmlentities($srt,ENT_NOQUOTES,UTF8);
 	return htmlspecialchars($srt);
 }
 
@@ -157,7 +157,7 @@ function getStateHtml($state){
 
 
 function deleteMapDepart($departId) {
-	global $conn;	
+	global $conn;
 	$sql = "DELETE FROM `map_block_depart` WHERE `depart_id` = '$departId'";
 	return mysql_query($sql, $conn);
 }
@@ -166,7 +166,7 @@ function deleteMapBlock($blockId) {
 	global $conn;
 	$sql = "DELETE FROM `map_block_depart` WHERE `block_id` = '$blockId'";
 	$result1 = mysql_query($sql, $conn);
-	
+
 	$sql = "DELETE FROM `block` WHERE `id` = '$blockId' ";
 	$result2 = mysql_query($sql, $conn);
 	return $result2 && $result1;
@@ -192,13 +192,13 @@ function addProblemTime($proId, $userId, $time, $state) {
 
 function _deleteDepartAdmin($departId){
 	global $conn;
-	
+
 	$sql = "select * from `depart` where `id` = '$departId'";
 	$result = mysql_query($sql, $conn);
 	if(!$row = mysql_fetch_array($result)){
 		return false;
 	}
-	
+
 	$userId = $row["center"];
 
 	$sql = "select count(*) num from `depart` where `center` = '$userId'";;
@@ -241,5 +241,21 @@ function getCenterId($departId){
 		return $row['center'];
 	}else{
 		return "0";
+	}
+}
+
+
+function getDepartIdByName($name){
+	global $conn;
+	//防止sql注入
+	$name = mysql_real_escape_string($name);
+
+	//实现此函数功能前检查此操作是否合法
+	$sql = "select id from `depart` where name = '$name'";
+	$result = @ mysql_query($sql, $conn);
+	if($row = mysql_fetch_array($result)){
+		return $row['id'];
+	}else{
+		return 0;
 	}
 }
