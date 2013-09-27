@@ -806,37 +806,59 @@ function getFixNowFixingProblem(){
 }
 
 
-function getAdminStatistics(){
+function getAdminDepartStatistics(){
 
 	$html = "";
 
 	$t = time ();
+	//每年维修次数
 	$className = "highcharts_t1_".$t;
 	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
 	$html .= "<script>if(everyYearNumberOfRepairs){everyYearNumberOfRepairs(\"$className\");}</script>";
-
+    
+	//各项目所占比例
 	$className = "highcharts_t2_".$t;
 	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
 	$html .= "<script>if(proportionOfRepairs){proportionOfRepairs(\"$className\");}</script>";
 
-	$className = "highcharts_t3_".$t;
-	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
-	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"各学生宿舍的维修次数比例\" , \"维修次数\",\"学生宿舍\");}</script>";
-
-	$className = "highcharts_t4_".$t;
-	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
-	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"学院及直属单位的维修次数比例\" , \"维修次数\",\"学院及直属单位\");}</script>";
-
-	$className = "highcharts_t5_".$t;
-	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
-	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"公用楼的维修次数比例\" , \"维修次数\",\"公用楼\");}</script>";
-
-	$className = "highcharts_t6_".$t;
-	$html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
-	$html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"校园公区环境的维修次数比例\" , \"维修次数\",\"校园公区环境\");}</script>";
-
-
-
+    //各项目平均用时
+    $className = "highcharts_t3_".$t;
+    $html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+    $html .= "<script>if(AverageTimeOfRepairs){AverageTimeOfRepairs(\"$className\");}</script>";
+    
+     //各项目平均用时
+    $className = "highcharts_t4_".$t;
+    $html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+    $html .= "<script>if(AverageSatisfactionRateOfRepairs){AverageSatisfactionRateOfRepairs(\"$className\");}</script>";
+    
+     //各项目每年资金使用
+   // $className = "highcharts_t5_".$t;
+  //  $html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+   // $html .= "<script>if(AverageSatisfactionRateOfRepairs){AverageSatisfactionRateOfRepairs(\"$className\");}</script>";
+    
+    
+    
+	
 	return output(0, $html);
+}
+
+function getAdminBlockStatistics(){
+	global $conn;
+    $html = "";
+    
+    $t = time ();
+    
+    $sql = "select * from depart";
+    $result = mysql_query($sql ,$conn);
+    while($row=mysql_fetch_array($result)) {
+        $id   = $row['id'];
+        $name = $row['name'];
+
+	    $className = "highcharts_t".$id."_".$t;
+	    $html  .= "<div  class=\"$className\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>";
+	    $html .= "<script>if(getProportionOfDepart){getProportionOfDepart(\"$className\",\"各".$name."的维修次数比例\" , \"维修次数\",\"".$name."\");}</script>";
+    }    
+    
+    return output(0, $html);
 }
 

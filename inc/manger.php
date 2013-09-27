@@ -22,6 +22,8 @@
  everyYearNumberOfRepairs => 18
  proportionOfRepairs => 19
  getProportionOfDepart => 20
+ AverageTimeOfRepairs => 21
+ AverageSatisfactionRateOfRepairs => 22
  */
 session_start();
 require_once("init.php");
@@ -75,6 +77,8 @@ if((!$conn || !$result) && $ret){
 			case 18:echo $json->encode(everyYearNumberOfRepairs());break;
 			case 19:echo $json->encode(proportionOfRepairs());break;
 			case 20:echo $json->encode(getProportionOfDepart());break;
+            case 21:echo $json->encode(getAverageTimeOfRepairs());break;
+         case 22:echo $json->encode(getAverageSatisfactionRateOfRepairs());break;
 		}
 	}
 }

@@ -26,7 +26,8 @@ if((!$conn || !$result) && $ret){
 			case 5 :echo $json->encode(getAdminWaitEvaluateProblem());break;
 			case 6 :echo $json->encode(getAdminFinishProblem());break;
 			case 7 :echo $json->encode(getAdminNotPassProblem());break;
-			case 8 :echo $json->encode(getAdminStatistics());break;
+			case 8 :echo $json->encode(getAdminDepartStatistics());break;
+			case 9 :echo $json->encode(getAdminBlockStatistics());break;
 		}
 	}else if(strcmp($name,"depart") == 0){
 		echo $json->encode(getMangerBlock($code));

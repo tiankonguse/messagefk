@@ -22,8 +22,6 @@ if(strcmp($name,"") == 0){
 }
 
 
-
-
 $type  =  6;
 ?>
 <div class="wrap container">
@@ -31,8 +29,8 @@ $type  =  6;
 <?php include_once('inc/nav.inc.php'); ?>
 	<div class="content">
 		<div class="row">
-			<div class="span2 bs-docs-sidebar">
-				<ul class="nav nav-list bs-docs-sidenav">
+			<div class="span2 bs-docs-sidebar" >
+				<ul class="nav nav-list bs-docs-sidenav" style="margin-top: 0px;margin-bottom:30px;">
 					<li class="manger_admin_nav1 active">
 						<a href="javascript:void(0);" onclick="getHtml('nav_admin',1);">
 							<i class="icon-chevron-right"></i> 管理分类
@@ -70,7 +68,12 @@ $type  =  6;
                     </li>
                     <li  class="manger_admin_nav8">
                         <a href="javascript:void(0);" onclick="getHtml('nav_admin',8);">
-                            <i class="icon-chevron-right"></i> 统计数据
+                            <i class="icon-chevron-right"></i> 整体的统计信息
+                        </a>
+                    </li>
+                    <li  class="manger_admin_nav9">
+                        <a href="javascript:void(0);" onclick="getHtml('nav_admin',9);">
+                            <i class="icon-chevron-right"></i> 各项目的数据信息
                         </a>
                     </li>
 				</ul>

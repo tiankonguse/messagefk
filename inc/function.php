@@ -259,3 +259,10 @@ function getDepartIdByName($name){
 		return 0;
 	}
 }
+
+function checkAutomaticEvaluation(){
+    global $conn;
+    $sql = "select id, user_id from `problem` problem where state = '4' and (select p)";
+    
+    
+}

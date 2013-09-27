@@ -1015,6 +1015,85 @@ function getProportionOfDepart(){
 	}
 }
 
+function getAverageTimeOfRepairs(){
+	global $conn;
+	if(!checkLev(LEV_ADMIN)){
+		return output(OUTPUT_ERROR, "你没有次操作的权限");
+	}
 
+	$res = array();
+	$res["xAxis"] = array("平均用时");
+	$res["data"] = array();
+	$result_depart = mysql_query("SELECT * FROM depart");
+
+	while($row_depart = mysql_fetch_array($result_depart)){
+		$depart_id=$row_depart['id'];
+		$depart_name=$row_depart['name'];
+
+		$depart = array();
+
+		$sql = "select count(*) num from problem where (state = '4' or state = '5') and depart_Id = '$depart_id'";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_array($result);
+		$num = $row["num"];
+
+		$sql = "select sum(total_time) sum from problem where (state = '4' or state = '5') and depart_Id = '$depart_id'";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_array($result);
+		$sum = $row["sum"] / 6000;
+        if($num > 0){
+        	$tmp =      $sum/$num;
+        }else{
+        	$tmp = 0;        	
+        }
+		$res["data"][] = array(
+          "name"=>$depart_name,
+        "data"=>array($tmp),
+        "total"=>$sum
+		);
+	}
+	return output(OUTPUT_SUCCESS, $res);
+
+}
+
+function getAverageSatisfactionRateOfRepairs(){
+    global $conn;
+    if(!checkLev(LEV_ADMIN)){
+        return output(OUTPUT_ERROR, "你没有次操作的权限");
+    }
+
+    $res = array();
+    $res["xAxis"] = array("平均用时");
+    $res["data"] = array();
+    $result_depart = mysql_query("SELECT * FROM depart");
+
+    while($row_depart = mysql_fetch_array($result_depart)){
+        $depart_id=$row_depart['id'];
+        $depart_name=$row_depart['name'];
+
+        $depart = array();
+
+        $sql = "select count(*) num from problem where state = '5' and depart_Id = '$depart_id'";
+        $result = mysql_query($sql);
+        $row = mysql_fetch_array($result);
+        $num = $row["num"];
+
+        $sql = "select sum(star) sum from problem where state = '5' and depart_Id = '$depart_id'";
+        $result = mysql_query($sql);
+        $row = mysql_fetch_array($result);
+        $sum = $row["sum"] * 20;
+        if($num > 0){
+            $tmp =      $sum/$num;
+        }else{
+            $tmp = 0;           
+        }
+        $res["data"][] = array(
+          "name"=>$depart_name,
+        "data"=>array($tmp),
+        "total"=>$sum
+        );
+    }
+    return output(OUTPUT_SUCCESS, $res);
+}
 
 ?>

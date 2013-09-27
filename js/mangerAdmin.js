@@ -388,6 +388,46 @@ function delete_block($id) {
     return false;
 }
 
+function showHighcharts_column($container, title, xAxis, yTitle, data, subtitle, maxY) {
+    $container
+	    .highcharts({
+		chart : {
+		    type : 'column'
+		},
+		title : {
+		    text : title
+		},
+		subtitle : {
+		    text : subtitle
+		},
+		xAxis : {
+		    categories : xAxis
+		},
+		yAxis : {
+		    min : 0,
+		    title : {
+			text : yTitle
+		    },
+		    max:maxY
+		},
+		tooltip : {
+		    headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+		    pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+			    + '<td style="padding:0"><b>{point.y:.1f} 分</b></td></tr>',
+		    footerFormat : '</table>',
+		    shared : true,
+		    useHTML : true
+		},
+		plotOptions : {
+		    column : {
+			pointPadding : 0.2,
+			borderWidth : 0
+		    }
+		},
+		series : data
+	    });
+}
+
 function showHighcharts_pie($container, title, typeText, data) {
 
     $container.highcharts({
@@ -456,7 +496,7 @@ function showHighcharts_line($container, title, xAxis, yTitle, data) {
 
 function everyYearNumberOfRepairs(className) {
     var $container = $("." + className);
-    
+
     $.post("inc/manger.php?state=18", {}, function(d) {
 	if (d.code == 0) {
 	    var obj = d.message;
@@ -475,7 +515,7 @@ function everyYearNumberOfRepairs(className) {
 		}
 		H_data[i]["data"] = data;
 	    }
-	    
+
 	    showHighcharts_line($container, "各类别项目每年以及到目前位置的维修次数", obj.xAxis,
 		    "个数", H_data);
 
@@ -489,28 +529,87 @@ function proportionOfRepairs(className) {
     var $container = $("." + className);
     $.post("inc/manger.php?state=19", {}, function(d) {
 	if (d.code == 0) {
-	     var obj = d.message;
-	     showHighcharts_pie($container, "各类别项目的维修次数比例" , "维修次数", obj);
+	    var obj = d.message;
+	    showHighcharts_pie($container, "各类别项目的维修次数比例", "维修次数", obj);
 	} else {
 	    $container.html(d.message);
 	}
     }, "json");
 }
 
-function getProportionOfDepart(className,title, typeText,departName) {
+function getProportionOfDepart(className, title, typeText, departName) {
     var $container = $("." + className);
     $.post("inc/manger.php?state=20", {
-	departName:departName
+	departName : departName
     }, function(d) {
 	console.log(d);
 	if (d.code == 0) {
-	     var obj = d.message;
-	     
-	     showHighcharts_pie($container, title , typeText, obj);
+	    var obj = d.message;
+
+	    showHighcharts_pie($container, title, typeText, obj);
 	} else {
 	    $container.html(d.message);
 	}
     }, "json");
 }
 
+function AverageTimeOfRepairs(className) {
+    var $container = $("." + className);
+    $.post("inc/manger.php?state=21", {}, function(d) {
+	if (d.code == 0) {
+	    var obj = d.message;
+	    var _data = obj.data;
+	    var total = 0;
+	    var l = _data.length;
+	    var H_data = [];
+	    var data;
+	    for ( var i = 0; i < l; i++) {
+		H_data[i] = {
+		    "name" : _data[i]["name"],
+		    "data" : null
+		};
+		data = _data[i]["data"];
+		total += parseInt(_data[i]["total"]);
+		for ( var j in data) {
+		    data[j] = parseInt(data[j]);
+		}
+		H_data[i]["data"] = data;
+	    }
+	    showHighcharts_column($container, "各类别项目维修完成的平均用时", obj.xAxis,
+		    "平均用时", H_data, "总用时：" + total + "分");
+	} else {
+	    $container.html(d.message);
+	}
+    }, "json");
+}
 
+function AverageSatisfactionRateOfRepairs(className) {
+    var $container = $("." + className);
+    $.post("inc/manger.php?state=22", {}, function(d) {
+	if (d.code == 0) {
+	    var obj = d.message;
+
+	    var _data = obj.data;
+	    var total = 0;
+	    var l = _data.length;
+	    var H_data = [];
+	    var data;
+	    for ( var i = 0; i < l; i++) {
+		H_data[i] = {
+		    "name" : _data[i]["name"],
+		    "data" : null
+		};
+		data = _data[i]["data"];
+		total += parseInt(_data[i]["total"]);
+		for ( var j in data) {
+		    data[j] = parseInt(data[j]);
+		}
+		H_data[i]["data"] = data;
+	    }
+	    showHighcharts_column($container, "各类别项目的平均满意率", obj.xAxis,
+		    "平均满意率(0～100)", H_data, "总满意率：" + total + "分", 100);
+	} else {
+	    $container.html(d.message);
+	}
+    }, "json");
+}
