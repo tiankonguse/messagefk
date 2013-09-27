@@ -3,7 +3,7 @@
 		
 		<li class="nav0"><a href='.'><span>网站首页</span></a></li>
 		<li class="nav1"><a href='suggest.php'><span>反馈问题</span></a></li>
-		<li class="nav2"><a href='suggestList.php'><span>反馈记录</span></a></li>
+		<li class="nav2"><a href='suggestList.php'><span>我的反馈记录</span></a></li>
 	   
 	<?php if($messagefkLev == 3) {?>
 		<li class="nav6"><a href='mangerAdmin.php'><span>管理</span></a></li>
