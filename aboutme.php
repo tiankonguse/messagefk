@@ -80,6 +80,7 @@ $messagefkEmail = "";
         
            <div class="list">
                 * 发短信功能 （这个需要再次协商，确认那些需要发短信，给谁发短信）
+                * 发短信间隔至少15秒，需要做成后台处理
            </div>
            
            <div class="list">

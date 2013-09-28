@@ -52,7 +52,7 @@ class phpSerial
 			else
 			{
 				//trigger_error("No stty availible, unable to run.", E_USER_ERROR);
-			}
+			}t
 		}
 		elseif(substr($sysname, 0, 7) === "Windows")
 		{

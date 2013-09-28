@@ -440,24 +440,31 @@ function addProblem() {
 		$result_depart = mysql_query($sql, $conn);
 		$row = mysql_fetch_array($result_depart);
 		$sendToCenter = $row['sendToCenter'];
+		$nowTime = date("m月d日H时i分",$asktime);
+
+
+
+		$problem_type_name = getDepartName($depart_id);
+		sendMSGToUser($proId, $userId, "您好，您于".$nowTime."提交的关于".$problem_type_name."维修的问题会马上解决。");
+
+		//sleep(15);
 
 		if ($sendToCenter == 1) {
 			$center = $row['center'];
 			$state = PRO_PASS;
 			addProblemTime($proId, $center, $asktime, $state);
-
-			sendMSGToAdmin($proId,"有个用户提交了一个问题,已经自动通过审核");
-			sendMSGToFix($proId, $center, "有个用户提交了一个问题");
 			$sql = "UPDATE `problem` SET `state` = '$state' WHERE `id` = '$proId'";
 			mysql_query($sql, $conn);
+				
+			sendMSGToAdmin($proId,"您好，".$name."于".$nowTime."提交了关于".$problem_type_name."维修的问题,已经自动通过审核。");
+			//sleep(15);
+			sendMSGToFix($proId, $center, "老师您好，".$name."于".$nowTime."提交了关于".$problem_type_name."维修的问题,请及时处理。");
 		}else{
-
-			sendMSGToAdmin($proId,"有个用户提交了一个问题");
+			sendMSGToAdmin($proId,"您好，".$name."于".$nowTime."提交了关于".$problem_type_name."维修的问题，请及时审核。");
 		}
 
-		sendMSGToUser($proId, $userId,"你好，你提交的问题会马上解决");
 
-		return output(OUTPUT_SUCCESS, "你的问题已经提交,你可以在导航栏中的“我的反馈记录”里查询进展");
+		return output(OUTPUT_SUCCESS, "您的问题已经提交,您可以在导航栏中的“我的反馈记录”里查询进展。");
 
 	} else {
 		return output(OUTPUT_ERROR, "表单填写不完整");
@@ -576,6 +583,9 @@ function passCheck(){
 			return output(OUTPUT_ERROR, "这个问题已经不存在");
 		}
 		$state = $row["state"];
+		$name = $row["realName"];
+
+
 
 		if($state != PRO_ASK){
 			return output(OUTPUT_ERROR, "这个问题已经审核过了");		
@@ -593,13 +603,15 @@ function passCheck(){
 		$userId = $row["user_id"];
 		$passTime = time();
 
-		$departId = $row["depart_id"];
+
 		$centerId = getCenterId($departId);
+		$departId = $row["depart_id"];
+		$nowTime = date("m月d日H时i分",$passTime);
+		$problem_type_name = getDepartName($departId);
 
 		addProblemTime($problemId, $adminId, $passTime, $state);
 
-		sendMSGToUser($problemId, $userId, "你好，你提交的问题已通过审核");
-		sendMSGToFix($problemId, $centerId, "你好，有新问题提交，请处理");		
+		sendMSGToFix($problemId, $centerId, "老师您好，".$name."于".$nowTime."提交了关于".$problem_type_name."维修的问题,请及时处理。");
 
 		return output(OUTPUT_SUCCESS, "操作成功");	
 
@@ -692,7 +704,7 @@ function accept(){
 		$result = mysql_query($sql, $conn);
 
 		if(!$result){
-			return output(OUTPUT_ERROR, "审核失败，请刷新后再审核");		
+			return output(OUTPUT_ERROR, "操作成功，请刷新后再操作");		
 		}
 
 		$fixId = $_SESSION['messagefkId'];
@@ -701,9 +713,7 @@ function accept(){
 
 		addProblemTime($problemId, $fixId, $acceptTime, $state);
 
-		sendMSGToUser($problemId, $userId, "你好，你的问题已经受理，现在正在维修中");	
-
-		return output(OUTPUT_SUCCESS, "受理通过");	
+		return output(OUTPUT_SUCCESS, "操作成功");	
 
 	} else {
 		return output(OUTPUT_ERROR, "表单填写不完整");
@@ -760,23 +770,44 @@ function finish(){
 		$finishtime = time();
 		$totalTime = $finishtime - $askTime;
 
+		$realName = $row["realName"];
+		$departId = $row["depart_id"];
+		$nowTime = date("m月d日H时i分",$askTime);
+
+		$problem_type_name = getDepartName($departId);
+
 		$state = PRO_FINISH;
 		$sql = "UPDATE `problem` SET `fixProple` = '$fixProple',`total_time` = '$totalTime',`totalCharge` = '$totalCharge',`state`= '$state', `chargeContent` = '$chargeContent', `result` = '$fixResult' where `id` = '$problemId'";
 		$result = mysql_query($sql, $conn);
 
 		if(!$result){
-			return output(OUTPUT_ERROR, "审核失败，请刷新后再审核");		
+			return output(OUTPUT_ERROR, "操作失败，请刷新后再操作");		
 		}
 
 		$fixId = $_SESSION['messagefkId'];
 
 		$acceptTime = time();
 
+		$min = intval($totalTime/60);
+		$hour = intval($min/60);
+		$min = $min - $hour * 60;
+
+		$day = intval($hour/24);
+		$hour = $hour - $day * 24;
+
+		$allTime = $day."天".$hour."时".$min."分";
+
 		addProblemTime($problemId, $fixId, $finishtime, $state);
 
-		sendMSGToUser($problemId, $userId, "你好，你的问题完成，请去评价");
-		sendMSGToAdmin($problemId,"问题编号为 $problemId 的问题已维修完成");
-
+		sendMSGToUser($problemId, $userId, "您好，您于".$nowTime."提交的关于".$problem_type_name."的问题已维修完成。请在网上评价(如未在24小时内做出评价，系统将会自动评价)。");
+		
+		sleep(15);
+		               
+		sendMSGToAdmin($problemId,"老师您好，".$realName."于".$nowTime."提交的关于".$problem_type_name."的问题已维修完成(本次维修总用时：$allTime)");
+		
+		
+		
+		
 		return output(OUTPUT_SUCCESS, "问题完成");	
 	} else {
 		return output(OUTPUT_ERROR, "表单填写不完整");
@@ -845,8 +876,6 @@ function over(){
 		}
 
 		addProblemTime($problemId, $_userId, $overtime, $state);
-
-		sendMSGToAdmin($problemId,"编号为 $problemId 的问题已评价");
 
 		return output(OUTPUT_SUCCESS, "评价完成");	
 
@@ -1041,11 +1070,11 @@ function getAverageTimeOfRepairs(){
 		$result = mysql_query($sql);
 		$row = mysql_fetch_array($result);
 		$sum = $row["sum"] / 6000;
-        if($num > 0){
-        	$tmp =      $sum/$num;
-        }else{
-        	$tmp = 0;        	
-        }
+		if($num > 0){
+			$tmp =      $sum/$num;
+		}else{
+			$tmp = 0;
+		}
 		$res["data"][] = array(
           "name"=>$depart_name,
         "data"=>array($tmp),
@@ -1057,43 +1086,43 @@ function getAverageTimeOfRepairs(){
 }
 
 function getAverageSatisfactionRateOfRepairs(){
-    global $conn;
-    if(!checkLev(LEV_ADMIN)){
-        return output(OUTPUT_ERROR, "你没有次操作的权限");
-    }
+	global $conn;
+	if(!checkLev(LEV_ADMIN)){
+		return output(OUTPUT_ERROR, "你没有次操作的权限");
+	}
 
-    $res = array();
-    $res["xAxis"] = array("平均用时");
-    $res["data"] = array();
-    $result_depart = mysql_query("SELECT * FROM depart");
+	$res = array();
+	$res["xAxis"] = array("平均用时");
+	$res["data"] = array();
+	$result_depart = mysql_query("SELECT * FROM depart");
 
-    while($row_depart = mysql_fetch_array($result_depart)){
-        $depart_id=$row_depart['id'];
-        $depart_name=$row_depart['name'];
+	while($row_depart = mysql_fetch_array($result_depart)){
+		$depart_id=$row_depart['id'];
+		$depart_name=$row_depart['name'];
 
-        $depart = array();
+		$depart = array();
 
-        $sql = "select count(*) num from problem where state = '5' and depart_Id = '$depart_id'";
-        $result = mysql_query($sql);
-        $row = mysql_fetch_array($result);
-        $num = $row["num"];
+		$sql = "select count(*) num from problem where state = '5' and depart_Id = '$depart_id'";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_array($result);
+		$num = $row["num"];
 
-        $sql = "select sum(star) sum from problem where state = '5' and depart_Id = '$depart_id'";
-        $result = mysql_query($sql);
-        $row = mysql_fetch_array($result);
-        $sum = $row["sum"] * 20;
-        if($num > 0){
-            $tmp =      $sum/$num;
-        }else{
-            $tmp = 0;           
-        }
-        $res["data"][] = array(
+		$sql = "select sum(star) sum from problem where state = '5' and depart_Id = '$depart_id'";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_array($result);
+		$sum = $row["sum"] * 20;
+		if($num > 0){
+			$tmp =      $sum/$num;
+		}else{
+			$tmp = 0;
+		}
+		$res["data"][] = array(
           "name"=>$depart_name,
         "data"=>array($tmp),
         "total"=>$sum
-        );
-    }
-    return output(OUTPUT_SUCCESS, $res);
+		);
+	}
+	return output(OUTPUT_SUCCESS, $res);
 }
 
 ?>

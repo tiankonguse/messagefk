@@ -20,6 +20,7 @@ function getPhoneFromUser($userId){
 
 function sendMSGToUser($proId, $userId, $msgText){
 	$phone = getPhoneFromPro($proId);
+	//echo $phone;
     try{
         sms($msgText,$phone);
     }catch(Exception $e){
@@ -28,6 +29,8 @@ function sendMSGToUser($proId, $userId, $msgText){
 }
 function sendMSGToAdmin($proId, $msgText){
     $phone = getPhoneFromUser(6);
+    //echo $phone."\n";
+    //echo $msgText."\n";
     try{
     	sms($msgText,$phone);
     }catch(Exception $e){

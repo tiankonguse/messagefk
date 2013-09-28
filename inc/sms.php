@@ -13,27 +13,44 @@ $phone_num="8618943696702";
 
 sms($msg,$phone_num);
 */
+
+$serial = new phpSerial;
+$set = false;
+$open = false;
+
 function sms($msg,$phone_num){
+   global $serial;
+   global $set;
+   global $open;
+   
     $phone_num = "86".$phone_num;
 	//加载php操作串口的类
 	$flag=false;
 
-        $serial = new phpSerial;
+        
  	//给ttyUSB0 赋权限
        // exec("chmod 775 /dev/ttyUSB0",$output,$status);
      
 	//连接USB gas modem
-	if($serial->deviceSet("/dev/ttyUSB0")){
-		$flag=true;	
-	}else{
-		return false;	
+	if(!$set){
+	    if($serial->deviceSet("/dev/ttyUSB0")){
+            $flag=true; 
+            $set = true;
+	    }else{
+	        return false;   
+	    }
+		
 	}
 
-	if($serial->deviceOpen()){
-		$flag=true;	
-	}else{
-		return false;	
-	}
+    if(!$open){
+        if($serial->deviceOpen()){
+            $flag=true; 
+            $open = true;
+	    }else{
+	        return false;   
+	    }
+    }
+
 
 	//要发送的手机号:
 	$phone_sendto = InvertNumbers($phone_num);
@@ -57,11 +74,11 @@ function sms($msg,$phone_num){
 	//$serial->sendMessage($mess_ll.chr(26));
 
 	//用完了就关掉,有始有终好习惯
-	if($serial->deviceClose()){
-		$flag=true;
-	}else{
-		return false;
-	}
+	//if($serial->deviceClose()){
+	////	$flag=true;
+	//}else{
+	//	return false;
+	//}
 	
 	return $flag;
 }

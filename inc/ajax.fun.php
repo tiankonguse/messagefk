@@ -746,9 +746,11 @@ function getFixStateProblem($state, $pagesize = 10){
 	if($page > $allsize){
 		$page = $allsize;
 	}
-
+	
 	$index = ($page - 1) * $pagesize;
-
+    if($index < 0){
+        $index = 0;
+    }
 
 
 	$html = "";
@@ -764,9 +766,13 @@ function getFixStateProblem($state, $pagesize = 10){
 	$html .= "</thead>";
 	$html .= "<tbody>";
 
-
+    
+	
 	$sql = "SELECT * FROM `problem` WHERE `state` = '$state' and `depart_id` in (select id from depart where center = '$FixId') ORDER BY  `id` DESC limit $index,$pagesize";
 	$result = mysql_query($sql ,$conn);
+	
+	//echo $sql."\n";
+	
 	while($row=mysql_fetch_array($result)) {
 
 		$pro_id = $row['id'];

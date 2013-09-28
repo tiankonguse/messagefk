@@ -2,9 +2,10 @@
 	
 	include"sms.php";
 
-	$msg="我是于茂升，我在测试一个东西，如果您收到短信，请QQ回复我哦。谢谢啦";
-	$phone_num="8613944097701";
+	$msg="老师您好，袁小康于09月23日17时54分";
+	$phone_num="13944097701";
 //	if(sms($msg,$phone_num);
+
 
 	if(sms($msg,$phone_num)){
 		echo "success";
