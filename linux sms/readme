@@ -1,0 +1,12 @@
+/*
+    auther:yums467  linux send message 20130711
+*/
+PHP调用minicom发送短信（minicom 作为一个 服务必须开启）
+   1.首先配置minicom :配置USB口的位置，因为考虑到学校网络中心做虚拟机，所以串口位置固定为ttyUSB0,波特率设置为9600.
+   2.考虑到重新插拔USB设备会出现设备权限不够的问题，我们修改了linux的配置信息如下：
+ 	更改udev的规则， ttyUSB0 的权限为666，即可实现让普通用户可读写。
+        添加udev规则（即在/etc/udev/rules.d/目录下创建50-usb-serial.rules文件，写入KERNEL=="ttyUSB0", GROUP="uucp",MODE="0666"
+	http://hi.baidu.com/hexi1985/item/f99820cf2a2c9246a8ba9465）：
+   3.sms函数实现了 返回值true false,以此来判断是否 发出去了短信。
+
+
