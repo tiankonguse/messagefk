@@ -330,3 +330,9 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
     color: #fff;
     background-color: #3E7AC6;
 }
+
+.bill input {
+    width: 100px;
+    padding: 2px;
+    margin: 0;
+}

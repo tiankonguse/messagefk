@@ -455,7 +455,7 @@ function addProblem() {
 			addProblemTime($proId, $center, $asktime, $state);
 			$sql = "UPDATE `problem` SET `state` = '$state' WHERE `id` = '$proId'";
 			mysql_query($sql, $conn);
-				
+
 			sendMSGToAdmin($proId,"您好，".$name."于".$nowTime."提交了关于".$problem_type_name."维修的问题,已经自动通过审核。");
 			//sleep(15);
 			sendMSGToFix($proId, $center, "老师您好，".$name."于".$nowTime."提交了关于".$problem_type_name."维修的问题,请及时处理。");
@@ -585,8 +585,6 @@ function passCheck(){
 		$state = $row["state"];
 		$name = $row["realName"];
 
-
-
 		if($state != PRO_ASK){
 			return output(OUTPUT_ERROR, "这个问题已经审核过了");		
 		}
@@ -603,9 +601,9 @@ function passCheck(){
 		$userId = $row["user_id"];
 		$passTime = time();
 
-
+        $departId = $row["depart_id"];
 		$centerId = getCenterId($departId);
-		$departId = $row["depart_id"];
+		
 		$nowTime = date("m月d日H时i分",$passTime);
 		$problem_type_name = getDepartName($departId);
 
@@ -800,14 +798,14 @@ function finish(){
 		addProblemTime($problemId, $fixId, $finishtime, $state);
 
 		sendMSGToUser($problemId, $userId, "您好，您于".$nowTime."提交的关于".$problem_type_name."的问题已维修完成。请在网上评价(如未在24小时内做出评价，系统将会自动评价)。");
-		
+
 		sleep(15);
-		               
+		 
 		sendMSGToAdmin($problemId,"老师您好，".$realName."于".$nowTime."提交的关于".$problem_type_name."的问题已维修完成(本次维修总用时：$allTime)");
-		
-		
-		
-		
+
+
+
+
 		return output(OUTPUT_SUCCESS, "问题完成");	
 	} else {
 		return output(OUTPUT_ERROR, "表单填写不完整");

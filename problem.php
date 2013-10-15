@@ -29,27 +29,25 @@ if(!$row=mysql_fetch_array($result)){
 
 $problemId = $id;
 
+$state = $row['state'];
+
 $userId = $row['user_id'];
 $userEmail = getUserEmail($userId);
 $userName = $row['realName'];
 $phone = $row['phone'];
 $star = intval($row['star']);
+$starContent =  $row['starContent'];
 
 $title = $row['title'];
 $content = $row['content'];
-$starContent =  $row['starContent'];
 
 $departId = $row['depart_id'];
 $departName = getDepartName($departId);
 $departMangerId = getDepartMangerId($departId);
 
-
 $blockId = $row['block_id'];
 $blockName = getBlocktName($blockId);
 
-$phone = $row['phone'];
-
-$state = $row['state'];
 
 $suggestTime = "";
 $passTime = "";
@@ -57,11 +55,21 @@ $acceptTime = "";
 $finishTime = "";
 $overTime = "";
 $totalTime = $row['total_time'];
+
 $fixEmail = "";
-$chargeContent = $row['chargeContent'];
+
+$reason = $row['reason'];
 $result = $row['result'];
+
+$arrayCharge = getCharge($problemId);
+$chargeCount = count($arrayCharge);
 $totalCharge = $row['totalCharge'];
+if(!$totalCharge){
+	$totalCharge = 0;
+}
 $fixProple = $row['fixProple'];
+$fixphone = $row['fixProplePhone'];
+
 
 $suggestTime = getStateTime($problemId,1);
 
@@ -80,7 +88,6 @@ if($state != PRO_NOT_PASS){
 	if($state >= PRO_FINISH){
 		$finishTime = getStateTime($problemId, PRO_FINISH);
 		$finishTime = date("Y-m-d H:i:s",$finishTime);
-
 		$tmp = $totalTime;
 		$totalTime = "";
 
@@ -179,8 +186,7 @@ $type  =  2;
                 </li>
                 <?php }else{?>
                 <li class="step-last">
-                    <div
-                        class="step-down">
+                    <div class="step-down">
                         <div class="step-name">审核未通过</div>
                         <div class="step-no"></div>
                     </div>
@@ -190,7 +196,8 @@ $type  =  2;
         </div>
         <div class="mini-layout content-inner">
             <table
-                class="table table-striped table-bordered table-condensed">
+                class="table table-striped table-bordered table-condensed"
+                style="margin-top: 20px;">
                 <tbody>
                     <tr>
                         <td colspan="6" class="problem-table-head">申报信息</td>
@@ -198,23 +205,23 @@ $type  =  2;
                     <tr>
                         <td>单据号:</td>
                         <td><?php echo $formId;?></td>
-                        <td>状态：</td>
+                        <td>状态:</td>
                         <td><?php echo $stateHtml;?></td>
-                        <td>申报时间：</td>
+                        <td>申报时间:</td>
                         <td><?php echo $suggestTime;?></td>
                     </tr>
                     <tr>
-                        <td>申报人：</td>
+                        <td>申报人:</td>
                         <td><?php echo $userName;?></td>
-                        <td>申报电话：</td>
+                        <td>申报电话:</td>
                         <td><?php echo $phone;?></td>
                         <td>审核时间：</td>
                         <td><?php echo $passTime;?></td>
                     </tr>
                     <tr>
-                        <td>服务类型：</td>
+                        <td>服务类型:</td>
                         <td><?php echo $departName;?></td>
-                        <td>服务区域：</td>
+                        <td>服务区域:</td>
                         <td><?php echo $blockName;?></td>
                         <td>操作</td>
                         <td><?php 
@@ -223,18 +230,18 @@ $type  =  2;
                         	$stateHtml = "<button class='btn btn-info' onclick=\"clickPassCheck($problemId)\">审核通过</button>
 								<button class='btn btn-danger' onclick=\"clickNotPassCheck($problemId)\">审核不通过</button>";
                         }else if($state == PRO_PASS && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
-                        	$stateHtml = "<button class='btn btn-info' onclick=\"clickAccept($problemId)\">开始受理</button>";
+                        	$stateHtml = "<button class='btn btn-info' onclick=\"preview($problemId)\">开始受理</button>";
                         }
                         echo $stateHtml;
                         ?>
                         </td>
                     </tr>
                     <tr>
-                        <td>申报标题：</td>
+                        <td>申报标题:</td>
                         <td colspan="5"><?php echo $title;?></td>
                     </tr>
                     <tr>
-                        <td>申报内容</td>
+                        <td>申报内容:</td>
                         <td colspan="5"
                             style="width: 500px; height: 80px;"
                             valign="top"><pre>
@@ -242,36 +249,14 @@ $type  =  2;
                             </pre>
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="6" class="problem-table-head">*付费信息</td>
-                    </tr>
-                    <tr>
-                        <td class="<?php echo $fixClass;?>">收费描述</td>
-                        <td colspan="3" style="height: 80px;"><?php 
-                        if($state == PRO_ACCEPT && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
-                        	echo "<textarea id=\"chargeContent\" class=\"chargeContent\">无</textarea>";
-                        }else{
-                        	echo "$chargeContent";
-                        }
-                        ?>
-                        </td>
-                        <td class="<?php echo $fixClass;?>">金额：</td>
-                        <td><?php 
-                        if($state == PRO_ACCEPT && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
-                        	echo "<input id=\"totalCharge\" type=\"text\" style=\"width:100px\" value=\"0\">元";
-                        }else{
-                        	echo "$totalCharge";
-                        }
-                        ?>
-                        </td>
-                    </tr>
+
                     <tr>
                         <td colspan="6" class="problem-table-head">*受理信息</td>
                     </tr>
                     <tr>
-                        <td>受理人邮箱：</td>
+                        <td>受理人:</td>
                         <td><?php echo $fixEmail;?></td>
-                        <td>受理时间：</td>
+                        <td>受理时间:</td>
                         <td><?php echo $acceptTime;?></td>
                         <td class="<?php echo $fixClass;?>">维修人：</td>
                         <td><?php 
@@ -284,25 +269,99 @@ $type  =  2;
                         </td>
                     </tr>
                     <tr>
-                        <td>完成时间：</td>
+                        <td>完成时间:</td>
                         <td><?php echo $finishTime;?></td>
                         <td>用时(分)</td>
                         <td><?php echo $totalTime;?></td>
-                        <td></td>
-                        <td></td>
+                        <td class="<?php echo $fixClass;?>">维修人电话:</td>
+                        <td><?php 
+                        if($state == PRO_ACCEPT && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
+                        	echo "<input id=\"fixphone\" type=\"text\" style=\"width:100px\" >";
+                        }else{
+                        	echo "$fixphone ";
+                        }
+                        ?>
+                        </td>
                     </tr>
+
+                    <?php if($messagefkId == $departMangerId ||  $messagefkLev > LEV_FIX){?>
+
                     <tr>
-                        <td class="<?php echo $fixClass;?>">维修效果：</td>
+                        <td>问题原因:</td>
                         <td colspan="5"
                             style="width: 500px; height: 80px;"
                             valign="top"><?php 
                             if($state == PRO_ACCEPT && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
-                            	echo "<textarea id=\"fixResult\" class=\"chargeContent\">修好</textarea>";
+                            	echo "<textarea id=\"problemReason\" class=\"chargeContent\" style=\"max-width: 800px; max-height: 70px;\">无</textarea>";
                             }else{
-									echo "$result";
-								}
-							?></td>
+                            	echo "$reason";
+                            }
+                            ?>
+                        </td>
                     </tr>
+                    <?php }?>
+
+                    <tr>
+                        <td>维修结果:</td>
+                        <td colspan="5"
+                            style="width: 500px; height: 80px;"
+                            valign="top"><?php 
+                            if($state == PRO_ACCEPT && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
+                            	echo "<textarea id=\"fixResult\" class=\"chargeContent\" style=\"max-width: 800px; max-height: 70px;\">修好</textarea>";
+                            }else{
+                            	echo "$result";
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                    <?php if($messagefkId == $departMangerId ||  $messagefkLev > LEV_FIX){?>
+                    <tr>
+                        <td colspan="6" class="problem-table-head">*付费信息</td>
+                    </tr>
+                    <tr>
+                        <td class="<?php echo $fixClass;?>">收费描述</td>
+                        <td colspan="3" style="height: 80px;">
+                            <table
+                                class="table table-striped table-bordered table-condensed bill">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20px;">物品名称</th>
+                                        <th style="width: 20px;">数量（个）</th>
+                                        <th style="width: 20px;">单价（元）</th>
+                                        <th style="width: 20px;">总计（元）</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php if(($state == PRO_PASS || $state == PRO_ACCEPT ) && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
+                                	for($i=0;$i<4;$i++){
+                                		echo "<tr cid=\"$i\">
+                                        <td><input type=\"text\"></td>
+                                        <td><input type=\"text\" value=\"0\"></td>
+                                        <td><input type=\"text\" value=\"0\"></td>
+                                        <td><input type=\"text\" disabled value=\"0\"></td>
+                                    </tr>";
+                                	}
+                                }else{
+                                	for($i=0;$i<$chargeCount;$i++){
+                                		echo "<tr>
+	                                        <td>{$arrayCharge['name']}</td>
+	                                        <td>{$arrayCharge['price']}</td>
+	                                        <td>{$arrayCharge['count']}</td>
+	                                        <td>{$arrayCharge['cost']}</td>
+	                                    </tr>";
+                                	}
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td class="<?php echo $fixClass;?>">金额：</td>
+                        <td class="all-bill"><?php echo  $totalCharge."元"; ?>
+                        </td>
+                    </tr>
+                    <?php }?>
+
+                    <?php if($state == PRO_FINISH || $state == PRO_OVER ){?>
                     <tr>
                         <td colspan="6" class="problem-table-head">*服务评价</td>
                     </tr>
@@ -343,27 +402,27 @@ $type  =  2;
                         <td></td>
                     </tr>
 
-
                     <tr>
                         <td>服务评价</td>
                         <td colspan="5"
                             style="width: 500px; height: 80px;"
                             valign="top"><?php 
-								if($state == PRO_FINISH  && $messagefkId == $userId){
-									echo "<textarea id=\"starContent\" class=\"chargeContent\"></textarea>";
-								}else{
-									echo "$starContent";
-								}
-							?>
+                            if($state == PRO_FINISH  && $messagefkId == $userId){
+                            	echo "<textarea id=\"starContent\" class=\"chargeContent\"></textarea>";
+                            }else{
+                            	echo "$starContent";
+                            }
+                            ?>
                         </td>
                     </tr>
-                    <?php 
-					if($state == PRO_ACCEPT && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
-						echo "<tr><td colspan='5' style='text-align: center;'><button class='btn btn-info' onclick=\"clickFinish($problemId)\">提交</button></td></tr>";						
-					}else if($state == PRO_FINISH  && $messagefkId == $userId){
-						echo "<tr><td colspan='5' style='text-align: center;'><button class='btn btn-info' onclick=\"clickOver($problemId)\">評價</button></td></tr>";						
-					}
-					?>
+                    <?php }?>
+                    <?php
+                    if($state == PRO_ACCEPT && $messagefkLev == LEV_FIX && $messagefkId == $departMangerId){
+                    	echo "<tr><td colspan='5' style='text-align: center;'><button class='btn btn-info' onclick=\"clickFinish($problemId)\">提交</button></td></tr>";				
+                    }else if($state == PRO_FINISH  && $messagefkId == $userId){
+                    	echo "<tr><td colspan='5' style='text-align: center;'><button class='btn btn-info' onclick=\"clickOver($problemId)\">評價</button></td></tr>";				
+                    }
+                    ?>
                 </tbody>
             </table>
 
@@ -378,5 +437,5 @@ $(document).ready(function(){
 	$(".nav-top ul li.nav<?php echo $type; ?>").addClass("active");
 });
 </script>
-<?php include_once('inc/footer.inc.php'); ?>
-<?php include_once('inc/end.php'); ?>
+                    <?php include_once('inc/footer.inc.php'); ?>
+                    <?php include_once('inc/end.php'); ?>

@@ -260,9 +260,31 @@ function getDepartIdByName($name){
 	}
 }
 
+function getCharge($problemId){
+	global $conn;
+	$sql = "select * from map_pro_bill where pro_id = '$problemId'";
+	$result = mysql_query($sql, $conn);
+	$ret = array();
+	while($row = mysql_fetch_array($result)){
+		$id = $row["bill_id"];
+		$sql = "SELECT `name`, `cost`, `price`, `count` FROM `bill` WHERE id = '$id'";
+		$one_result = mysql_query($sql, $conn);
+		$one_row = mysql_fetch_array($one_result);
+		if($one_row){
+			$ret[] = array(
+                "name"=>$one_row['name'],
+                "cost"=>$one_row['cost'],
+			    "price"=>$one_row['price'],
+			    "count"=>$one_row['count']
+			);
+		}
+	}
+	return $ret;
+}
+
 function checkAutomaticEvaluation(){
-    global $conn;
-    $sql = "select id, user_id from `problem` problem where state = '4' and (select p)";
-    
-    
+	global $conn;
+	$sql = "select id, user_id from `problem` problem where state = '4' and (select p)";
+
+
 }

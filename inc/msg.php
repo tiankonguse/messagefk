@@ -1,5 +1,11 @@
 <?php
-include "sms.php";
+
+function sms($msgText,$phone){
+    global $conn;
+    $msgText = mysql_real_escape_string($msgText);
+    $sql = "insert into `smg_catch` (`phone`,`content`) values('$phone', '$msgText')";
+    return mysql_query($sql, $conn);
+}
 
 function getPhoneFromPro($proId){
     global $conn;
@@ -20,31 +26,15 @@ function getPhoneFromUser($userId){
 
 function sendMSGToUser($proId, $userId, $msgText){
 	$phone = getPhoneFromPro($proId);
-	//echo $phone;
-    try{
-        sms($msgText,$phone);
-    }catch(Exception $e){
-    
-    }
+	sms($msgText,$phone);
 }
 function sendMSGToAdmin($proId, $msgText){
     $phone = getPhoneFromUser(6);
-    //echo $phone."\n";
-    //echo $msgText."\n";
-    try{
-    	sms($msgText,$phone);
-    }catch(Exception $e){
-    
-    }
-    
+    sms($msgText,$phone);
 }
 
 function sendMSGToFix($proId, $FixId, $msgText){
     $phone = getPhoneFromUser($FixId);
-    try{
-        sms($msgText,$phone);
-    }catch(Exception $e){
-    
-    }
+    sms($msgText,$phone);
 }
 
