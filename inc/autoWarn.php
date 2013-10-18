@@ -8,10 +8,7 @@ $filename = __FILE__;
 $f = fopen($filename, 'r');
 $locked = flock($f, LOCK_NB | LOCK_EX);
 if($locked) {
-	checkAutomaticEvaluation();
-	flock($f, LOCK_UN);
+    checkAutoWarn();
+    flock($f, LOCK_UN);
 }
 require_once('end.php');
-
-
-?>

@@ -38,8 +38,7 @@ class phpSerial
 	function __construct (){
 		//Set locale information
 		setlocale(LC_ALL, "en_US");
-
-
+		
 		//返回运行 PHP 的系统的有关信
 		$sysname = php_uname();
 
