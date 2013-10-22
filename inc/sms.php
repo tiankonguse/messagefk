@@ -1,6 +1,6 @@
 <?php
 include "php_serial.class.php";
-function sms($msg, $phone_num) {
+function sms_real($msg, $phone_num) {
     $serial = new phpSerial ();
         
     if ($serial->deviceSet ( "/dev/ttyUSB0" )) {
@@ -30,10 +30,12 @@ function sms($msg, $phone_num) {
     // echo strlen($message);
     $mess = "11000D91" . $phone_sendto . "000800" . sprintf ( "%02X", strlen ( $message ) / 2 ) . $message;
     
+//     var_dump("at+cmgf=0" . chr ( 13 ), "at+cmgs=" . sprintf ( "%d", strlen ( $mess ) / 2 ) . chr ( 13 ) , '00' . $mess . chr ( 26 ));
+    
     $serial->sendMessage ( "at+cmgf=0" . chr ( 13 ) );
     
     $serial->sendMessage ( "at+cmgs=" . sprintf ( "%d", strlen ( $mess ) / 2 ) . chr ( 13 ) );
-    // 不加短信中心号码
+//     // 不加短信中心号码
     $serial->sendMessage ( '00' . $mess . chr ( 26 ) );
     
     return true;

@@ -793,6 +793,68 @@ function finish() {
         return output ( OUTPUT_ERROR, "表单填写不完整" );
     }
 }
+
+function _over(){
+    global $conn;
+    if (isset ( $_POST ['id'] ) && isset ( $_POST ['starConetnt'] ) && isset ( $_POST ['star'] )) {
+        // 获得表单数据
+        $problemId = intval ( $_POST ['id'] );
+        $starConetnt = ($_POST ['starConetnt']);
+        $star = intval ( $_POST ['star'] );
+    
+        // 检查表单数据是否合法
+        if ($problemId == 0 || strcmp ( $starConetnt, "" ) == 0) {
+            return output ( OUTPUT_ERROR, "表单填写不完整" );
+        }
+    
+        // 检查表单数据是否合法
+        if ($star < 1 || $star > 5) {
+            return output ( OUTPUT_ERROR, "非法数据" );
+        }
+    
+        // 操作数据库
+        $sql = "select * from problem where id = '$problemId'";
+        $result = mysql_query ( $sql, $conn );
+        if (! $row = mysql_fetch_array ( $result )) {
+            return output ( OUTPUT_ERROR, "$problemId 这个问题已经不存在" );
+        }
+        $userId = $row ["user_id"];
+        $state = $row ["state"];
+        if ($state != PRO_FINISH) {
+            return output ( OUTPUT_ERROR, "这个问题已经处理过了" );
+        }
+    
+//         $_userId = $_SESSION ['messagefkId'];
+    
+//         if ($_userId != $userId) {
+//             return output ( OUTPUT_ERROR, "你没有此操作的权限" );
+//         }
+    
+        // prevent xss
+        $starConetnt = xss ( $starConetnt );
+    
+        // Prevent sql injection
+        $starConetnt = mysql_real_escape_string ( $starConetnt );
+    
+        $overtime = time ();
+    
+        $state = PRO_OVER;
+        $sql = "UPDATE `problem` SET `state`= '$state', `star` = '$star' , `starContent` = '$starConetnt' where `id` = '$problemId'";
+        $result = mysql_query ( $sql, $conn );
+    
+        if (! $result) {
+            return output ( OUTPUT_ERROR, "操作失败，请刷新后再操作" );
+        }
+    
+        addProblemTime ( $problemId, $_userId, $overtime, $state );
+    
+        return output ( OUTPUT_SUCCESS, "评价完成" );
+    } else {
+        return output ( OUTPUT_ERROR, "表单填写不完整" );
+    }
+}
+
+
 function over() {
     global $conn;
     

@@ -6,8 +6,7 @@
 	$phone_num="13944097701";
 //	if(sms($msg,$phone_num);
 
-echo "begin <br/>";
-	if(sms($msg,$phone_num)){
+	if(sms_real($msg,$phone_num)){
 		echo "success";
 	}else{
 		echo "failed";	

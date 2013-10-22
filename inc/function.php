@@ -254,12 +254,20 @@ function getCharge($problemId) {
 // 智能发短信
 function checkAutoSendMsg() {
     global $conn;
-    $sql = "SELECT * FROM  `smg_catch` LIMIT 0 , 1";
+    $sql = "SELECT * FROM  `smg_catch` ORDER BY  `smg_catch`.`id` ASC  LIMIT 0 , 1";
     $result = mysql_query ( $sql, $conn );
     if ($row = mysql_fetch_array ( $result )) {
-        $msg = $row["content"];
-        $phone_num = $row["phone"];
-        sms($msg,$phone_num);
+        $msg = $row ["content"];
+        $phone_num = $row ["phone"];
+        $id = $row ["id"];
+        // var_dump($msg,$phone_num);
+        if (sms_real ( $msg, $phone_num )) {
+            echo "success";
+            $sql = "delete FROM  `smg_catch` where id = '$id'";
+            mysql_query ( $sql, $conn );
+        } else {
+            echo "failed";
+        }
     }
 }
 
@@ -273,7 +281,8 @@ function checkAutoEvaluation() {
     $_POST ['star'] = 5;
     while ( $row = mysql_fetch_array ( $result ) ) {
         $_POST ['id'] = $row ["id"];
-        over ();
+//         var_dump($_POST);
+        _over ();
         sendMSGToUser ( $_POST ['id'], 0, "你好，由于你未在24小时内做出评价，系统已自动评价)。" );
     }
 }
@@ -289,7 +298,16 @@ function checkAutoWarn() {
         $id = $row ["id"];
         $sql = "UPDATE `problem` SET `twentyFourHour` = '1'WHERE `id`= '$id'";
         mysql_query ( $sql, $conn );
-        sendMSGToAdmin ( $id, "老师您好，id 号为 $id 的问题已经超过24小时未得到解决。");
+        sendMSGToAdmin ( $id, "老师您好，id 号为 $id 的问题已经超过24小时未得到解决。" );
     }
 }
-
+function getNowPage($page, $allsize) {
+    if ($page > $allsize) {
+        $page = $allsize;
+    }
+    
+    if ($page < 1) {
+        $page = 1;
+    }
+    return $page;
+}

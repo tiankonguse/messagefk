@@ -149,10 +149,10 @@ class phpSerial
 	 * @param string $str string to be sent to the device
 	 * @param float $waitForReply time to wait for the reply (in seconds)
 	 */
-	function sendMessage ($str, $waitForReply = 0.1){
+	function sendMessage ($str, $waitForReply = 1){
 		$this->_buffer .= $str;
 
-		if ($this->autoflush === true) $this->flush();
+		$this->flush();
 
 		usleep((int) ($waitForReply * 1000000));
 	}
@@ -176,18 +176,11 @@ class phpSerial
 
 
 	function _ckOpened(){
-		if ($this->_dState !== SERIAL_DEVICE_OPENED){
-			return false;
-		}
-		return true;
+		return $this->_dState === SERIAL_DEVICE_OPENED;
 	}
 
 	function _ckClosed(){
-		if ($this->_dState !== SERIAL_DEVICE_CLOSED){
-			return false;
-		}
-
-		return true;
+		return $this->_dState === SERIAL_DEVICE_CLOSED;
 	}
 
 	function _exec($cmd, &$out = null){
