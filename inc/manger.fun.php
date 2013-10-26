@@ -432,11 +432,11 @@ function addProblem() {
             $sql = "UPDATE `problem` SET `state` = '$state' WHERE `id` = '$proId'";
             mysql_query ( $sql, $conn );
             
-            sendMSGToAdmin ( $proId, "您好，" . $name . "于" . $nowTime . "提交了关于" . $problem_type_name . "维修的问题,已经自动通过审核。" );
+            sendMSGToAdmin ( $proId, "您好，" . $name . "提交了问题,已经自动通过审核。" );
 
-            sendMSGToFix ( $proId, $center, "老师您好，" . $name . "于" . $nowTime . "提交了关于" . $problem_type_name . "维修的问题,请及时处理。" );
+            sendMSGToFix ( $proId, $center, "老师您好，" . $name . "提交了问题,请及时处理。" );
         } else {
-            sendMSGToAdmin ( $proId, "您好，" . $name . "于" . $nowTime . "提交了关于" . $problem_type_name . "维修的问题，请及时审核。" );
+            sendMSGToAdmin ( $proId, "您好，" . $name . "提交了问题，请及时审核。" );
         }
         
         return output ( OUTPUT_SUCCESS, "您的问题已经提交,您可以在导航栏中的“我的反馈记录”里查询进展。" );
@@ -576,7 +576,7 @@ function passCheck() {
         
         addProblemTime ( $problemId, $adminId, $passTime, $state );
         
-        sendMSGToFix ( $problemId, $centerId, "老师您好，" . $name . "于" . $nowTime . "提交了关于" . $problem_type_name . "维修的问题,请及时处理。" );
+        sendMSGToFix ( $problemId, $centerId, "老师您好，" . $name . "提交了问题,请及时处理。" );
         
         return output ( OUTPUT_SUCCESS, "操作成功" );
     } else {
@@ -784,9 +784,10 @@ function finish() {
         
         addProblemTime ( $problemId, $fixId, $finishtime, $state );
         
-        sendMSGToUser ( $problemId, $userId, "您好，您于" . $nowTime . "提交的关于" . $problem_type_name . "的问题已维修完成。请在网上评价(如未在24小时内做出评价，系统将会自动评价)。" );
+//         sendMSGToUser ( $problemId, $userId, "您好，您于" . $nowTime . "提交的关于" . $problem_type_name . "的问题已维修完成。请在网上评价(如未在24小时内做出评价，系统将会自动评价)。" );
+        sendMSGToUser ( $problemId, $userId, "您好，您提交的问题已维修完成。请在网上评价(如未在24小时内做出评价，系统将会自动评价)。" );
         
-        sendMSGToAdmin ( $problemId, "老师您好，" . $realName . "于" . $nowTime . "提交的关于" . $problem_type_name . "的问题已维修完成(本次维修总用时：$allTime)" );
+        sendMSGToAdmin ( $problemId, "老师您好，您提交的问题已维修完成(本次维修总用时：$allTime)" );
         
         return output ( OUTPUT_SUCCESS, "问题完成" );
     } else {
